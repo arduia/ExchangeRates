@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Exchange Rates</string>
+    <string name="choose_currency_type">Choose currency type</string>
+    <string name="last_update">last update</string>
+    <string name="today">Today</string>
+    <string name="enter_currency">Enter currency</string>
+    <string name="prefix_exchange_rates_title">Exchange Rates for</string>
+    <string name="search">Search</string>
+    <string name="rates_downloading_description">Downloading Excehange Rates</string>
+    <string name="empty_exchange_rates">Empty Exchange Rates</string>
+    <string name="empty_currencies">Empty Currencies</string>
+    <string name="downloading_currencies_description">Downloading Currencies</string>
+    <string name="rate_equal">=</string>
+    <string name="empty_last_update_date">- - -</string>
+</resources>
