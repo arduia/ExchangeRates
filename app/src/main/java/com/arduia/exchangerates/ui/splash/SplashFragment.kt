@@ -8,12 +8,14 @@ import androidx.navigation.fragment.findNavController
 import com.arduia.exchangerates.R
 import com.arduia.exchangerates.databinding.FragSplashBinding
 import com.arduia.exchangerates.ui.common.BaseBindingFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
  * Created by Aung Ye Htet at 16/1/2021 6:03 PM.
  */
+@AndroidEntryPoint
 class SplashFragment : BaseBindingFragment<FragSplashBinding>() {
 
     override fun createBinding(layoutInflater: LayoutInflater, parent: ViewGroup?): FragSplashBinding {
