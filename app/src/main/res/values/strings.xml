@@ -17,4 +17,5 @@
     <string name="try_again">Try Again</string>
     <string name="exit">Exit</string>
     <string name="updating">Updating..</string>
+    <string name="prefix_version">Version</string>
 </resources>

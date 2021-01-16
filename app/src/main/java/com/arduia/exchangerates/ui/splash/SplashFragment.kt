@@ -10,7 +10,9 @@ import com.arduia.exchangerates.R
 import com.arduia.exchangerates.databinding.FragSplashBinding
 import com.arduia.exchangerates.ui.common.BaseBindingFragment
 import com.arduia.exchangerates.ui.common.EventObserver
+import com.arduia.exchangerates.ui.common.ext.getApplicationVersionName
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.StringBuilder
 
 /**
  * Created by Aung Ye Htet at 16/1/2021 6:03 PM.
@@ -26,7 +28,16 @@ class SplashFragment : BaseBindingFragment<FragSplashBinding>() {
 
     override fun onViewCreated(savedInstanceState: Bundle?) {
         super.onViewCreated(savedInstanceState)
+        setupView()
         setupViewModel()
+    }
+
+    private fun setupView() {
+
+        binding.tvVersion.text = StringBuilder().append(getString(R.string.prefix_version))
+                .append(" ")
+                .append(requireContext().getApplicationVersionName())
+                .toString()
     }
 
     private fun setupViewModel() {

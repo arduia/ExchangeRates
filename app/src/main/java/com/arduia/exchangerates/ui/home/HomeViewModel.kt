@@ -3,9 +3,7 @@ package com.arduia.exchangerates.ui.home
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.arduia.exchangerates.ui.common.BaseLiveData
-import com.arduia.exchangerates.ui.common.CurrencyTypeItemUiModel
-import com.arduia.exchangerates.ui.common.post
+import com.arduia.exchangerates.ui.common.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,6 +33,9 @@ class HomeViewModel @ViewModelInject constructor() : ViewModel() {
     private val _isRatesDownloading = BaseLiveData<Boolean>()
     val isRatesDownloading get() = _isRatesDownloading.asLiveData()
 
+    private val _onNoConnection = EventLiveData<Unit>()
+    val onNoConnection get() = _onNoConnection.asLiveData()
+
     init {
         showFakeCurrencyType()
     }
@@ -59,6 +60,8 @@ class HomeViewModel @ViewModelInject constructor() : ViewModel() {
             _isRatesDownloading post false
             _isEmptyRates post true
             onEmptyData()
+            delay(1000)
+            _onNoConnection post UnitEvent
         }
     }
 

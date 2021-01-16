@@ -7,12 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
 import com.arduia.exchangerates.R
 import com.arduia.exchangerates.databinding.FragHomeBinding
 import com.arduia.exchangerates.ui.common.BaseBindingFragment
+import com.arduia.exchangerates.ui.common.EventObserver
+import com.arduia.exchangerates.ui.common.NoInternetConnectionDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -25,6 +28,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
 
     private var rateDownloadingDialog: Dialog? = null
     private var syncRotateAnimation: Animation? = null
+    private var noConnectionDialog: NoInternetConnectionDialog? = null
 
     override fun createBinding(layoutInflater: LayoutInflater, parent: ViewGroup?): FragHomeBinding {
         return FragHomeBinding.inflate(layoutInflater, parent, false)
@@ -94,10 +98,14 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         })
 
         viewModel.isRatesDownloading.observe(viewLifecycleOwner, {
-            when(it){
+            when (it) {
                 true -> showDownloadingRatesDialog()
                 else -> hideDownloadingRatesDialog()
             }
+        })
+
+        viewModel.onNoConnection.observe(viewLifecycleOwner, EventObserver {
+            showNoConnectionDialog()
         })
 
     }
@@ -114,10 +122,33 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
 
     override fun onBeforeBindingDestroy() {
         super.onBeforeBindingDestroy()
+        noConnectionDialog?.setOnExitClickListener(null)
+        noConnectionDialog?.setOnExitClickListener(null)
+        hideNoConnectionDialog()
+        noConnectionDialog = null
         hideDownloadingRatesDialog()
         rateDownloadingDialog = null
         stopSyncRotation()
         syncRotateAnimation = null
+    }
+
+    private fun showNoConnectionDialog() {
+        noConnectionDialog = NoInternetConnectionDialog(requireContext())
+        noConnectionDialog?.setOnExitClickListener {
+            exitFromHome()
+        }
+        noConnectionDialog?.setOnTryAgainClickListener {
+
+        }
+        noConnectionDialog?.show()
+    }
+
+    private fun exitFromHome() {
+        requireActivity().finish()
+    }
+
+    private fun hideNoConnectionDialog() {
+        noConnectionDialog?.dismiss()
     }
 
     private fun startSyncRotate() {
