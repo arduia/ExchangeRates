@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.exchangerates.databinding.ItemCurrencyTypeBinding
+import com.arduia.exchangerates.ui.common.CurrencyTypeItemUiModel
 
 /**
  * Created by Aung Ye Htet at 16/01/2021 6:38 PM.

@@ -29,6 +29,7 @@
         app:layout_constraintBottom_toTopOf="@id/tv_version"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:visibility="invisible"
         />
 
     <TextView

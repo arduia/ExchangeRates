@@ -38,7 +38,7 @@ class EventObserver<T> (private val onEventUnhandledContent: (T) -> Unit): Obser
 /**
  * Return New Unit Event for State Representation.
  */
-val EventUnit get() =  Event(Unit)
+val UnitEvent get() =  Event(Unit)
 
 /**
  * New Event with content{T}
