@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_main"
+    app:startDestination="@id/dest_splash"
+    >
+
+    <fragment
+        android:id="@+id/dest_splash"
+        android:name="com.arduia.exchangerates.ui.splash.SplashFragment"
+        android:label="SplashFragment"
+        tools:layout="@layout/frag_splash"
+        >
+        <action
+            android:id="@+id/action_dest_splash_to_dest_home"
+            app:destination="@id/dest_home"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/dest_home"
+        android:name="com.arduia.exchangerates.ui.home.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/frag_home"
+        >
+        <action
+            android:id="@+id/action_dest_home_to_dest_choose_currency"
+            app:destination="@id/dest_choose_currency"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/dest_choose_currency"
+        android:name="com.arduia.exchangerates.ui.currencies.ChooseCurrencyFragment"
+        android:label="ChooseCurrencyFragment"
+        tools:layout="@layout/frag_choose_currency"
+        />
+</navigation>
