@@ -10,6 +10,6 @@ class HostActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activ_host)
+        setContentView(R.layout.frag_choose_currency)
     }
 }

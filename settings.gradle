@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name = "Currency Converter"
+rootProject.name = "Exchange Rates"
