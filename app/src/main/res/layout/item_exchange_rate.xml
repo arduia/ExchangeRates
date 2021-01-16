@@ -47,7 +47,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_single_exchange_rate"
+        android:id="@+id/tv_exchange_balance"
         style="?textAppearanceCaption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
