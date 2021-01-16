@@ -4,10 +4,12 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arduia.exchangerates.ui.common.*
+import com.arduia.exchangerates.ui.home.format.SyncDateFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
+import java.util.*
 
 
 /**
@@ -38,6 +40,7 @@ class HomeViewModel @ViewModelInject constructor() : ViewModel() {
 
     init {
         showFakeCurrencyType()
+        _lastUpdateDate post SyncDateFormatter().format(Date().time)
     }
 
     fun startSync(){
