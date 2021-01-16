@@ -34,12 +34,10 @@
         android:layout_width="@dimen/icon_size"
         android:layout_height="@dimen/icon_size"
         android:layout_marginTop="@dimen/margin_small"
-        android:layout_marginEnd="@dimen/margin_large"
-        android:layout_marginRight="@dimen/margin_large"
-        android:background="@color/white_alpha50"
+        android:background="@drawable/bg_white_alpha50_layerlist"
         android:scaleType="centerInside"
         android:src="@drawable/ic_sync"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/cv_entry"
         app:layout_constraintTop_toBottomOf="@id/tv_logo"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.ExchangeRates.Circular"
         app:tint="?colorSecondary"
@@ -79,6 +77,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_sync"
+        app:layout_constraintWidth_max="@dimen/width_maximum_inner_widget"
         >
 
         <RelativeLayout
@@ -108,7 +107,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_small"
-                android:background="@color/gray_50"
+                android:background="@drawable/bg_gray50_layerlist"
                 >
 
                 <TextView
@@ -176,7 +175,7 @@
                 android:layout_marginHorizontal="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_small"
                 android:layout_marginBottom="@dimen/margin_large"
-                android:background="@color/gray_50"
+                android:background="@drawable/bg_gray50_layerlist"
                 >
 
                 <androidx.appcompat.widget.AppCompatEditText
@@ -187,7 +186,8 @@
                     android:layout_marginEnd="@dimen/margin_large"
                     android:layout_marginRight="@dimen/margin_large"
                     android:background="@android:color/transparent"
-                    android:hint="1.00"
+                    android:hint="@string/default_currency_hint"
+                    android:inputType="numberDecimal"
                     android:maxLines="1"
                     android:paddingHorizontal="@dimen/margin_medium"
                     android:paddingVertical="@dimen/margin_small"
@@ -204,7 +204,7 @@
                     android:layout_marginVertical="@dimen/margin_small"
                     android:layout_marginEnd="@dimen/margin_medium"
                     android:layout_marginRight="@dimen/margin_medium"
-                    android:background="?selectableItemBackground"
+                    android:background="?selectableItemBackgroundBorderless"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_backspace"
                     />
@@ -258,10 +258,9 @@
         android:id="@+id/rv_exchange_rates"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_medium"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/cv_entry"
+        app:layout_constraintStart_toStartOf="@id/cv_entry"
         app:layout_constraintTop_toBottomOf="@id/tv_rates_description"
         tools:listitem="@layout/item_exchange_rate"
         />

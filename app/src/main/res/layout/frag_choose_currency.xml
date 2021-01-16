@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,6 +14,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:background="?colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         >
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -41,12 +44,16 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linear_search"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/fl_toolbar"
         android:layout_marginHorizontal="@dimen/margin_large"
         android:layout_marginTop="@dimen/margin_medium"
         android:background="@color/white_alpha50"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fl_toolbar"
+
+        app:layout_constraintWidth_max="@dimen/width_maximum_inner_widget"
         >
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -54,7 +61,7 @@
             android:layout_width="@dimen/icon_size"
             android:layout_height="@dimen/icon_size"
             android:layout_marginVertical="@dimen/margin_small"
-            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginStart="@dimen/margin_small"
             android:layout_marginLeft="@dimen/margin_small"
             android:scaleType="centerInside"
             android:src="@drawable/ic_search"
@@ -79,12 +86,13 @@
         android:id="@+id/imv_dollar"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_below="@id/linear_search"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/margin_large"
         android:src="@drawable/ic_dollar"
         android:tint="@color/gray_300"
         android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linear_search"
         />
 
     <TextView
@@ -98,17 +106,23 @@
         android:text="@string/empty_currencies"
         android:textColor="@color/gray_300"
         android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imv_dollar"
         />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_currencies"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/linear_search"
         android:layout_marginHorizontal="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_small"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linear_search"
+        app:layout_constraintWidth_max="@dimen/width_maximum_inner_widget"
         tools:listitem="@layout/item_currency_type"
         />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

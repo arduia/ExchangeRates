@@ -8,5 +8,6 @@
     <dimen name="icon_size">35dp</dimen>
 
     <dimen name="height_home_top_background">210dp</dimen>
+    <dimen name="width_maximum_inner_widget">400dp</dimen>
 
 </resources>
