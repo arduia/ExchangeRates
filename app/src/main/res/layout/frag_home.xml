@@ -121,7 +121,7 @@
                     android:layout_marginVertical="@dimen/margin_medium"
                     android:layout_marginStart="@dimen/margin_medium"
                     android:layout_marginLeft="@dimen/margin_medium"
-                    android:text="MMK"
+                    tools:text="MMK"
                     />
 
                 <TextView
@@ -137,7 +137,7 @@
                     android:layout_marginEnd="@dimen/margin_medium"
                     android:layout_toEndOf="@id/tv_selected_currency_code"
                     android:layout_toRightOf="@id/tv_selected_currency_code"
-                    android:text="Myanmar"
+                    tools:text="Myanmar"
                     />
 
                 <androidx.appcompat.widget.AppCompatImageView

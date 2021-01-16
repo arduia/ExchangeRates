@@ -42,6 +42,18 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
             navigateToChooseCurrency()
             it.isClickable = true
         }
+
+        binding.btnSync.setOnClickListener {
+            viewModel.startSync()
+        }
+
+        binding.btnBackspace.setOnClickListener {
+            clearEnteredCurrencyValue()
+        }
+    }
+
+    private fun clearEnteredCurrencyValue() {
+        binding.edtCurrencyValue.setText("")
     }
 
     private fun navigateToChooseCurrency() {
@@ -56,6 +68,38 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
                 else -> hideEmptyRates()
             }
         })
+
+        viewModel.selectedCurrencyType.observe(viewLifecycleOwner, {
+            with(binding) {
+                tvSelectedCurrencyCode.text = it.currencyCode
+                tvSelectedCurrencyCountry.text = it.countryName
+            }
+        })
+
+        viewModel.lastUpdateDate.observe(viewLifecycleOwner, {
+            binding.tvLastUpdateDate.text = it
+        })
+
+        viewModel.isSyncRunning.observe(viewLifecycleOwner, {
+            when (it) {
+                true -> {
+                    binding.tvUpdateStatus.text = getString(R.string.updating)
+                    startSyncRotate()
+                }
+                false -> {
+                    binding.tvUpdateStatus.text = getString(R.string.last_update)
+                    stopSyncRotation()
+                }
+            }
+        })
+
+        viewModel.isRatesDownloading.observe(viewLifecycleOwner, {
+            when(it){
+                true -> showDownloadingRatesDialog()
+                else -> hideDownloadingRatesDialog()
+            }
+        })
+
     }
 
     private fun showDownloadingRatesDialog() {

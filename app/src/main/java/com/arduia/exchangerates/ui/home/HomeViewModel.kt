@@ -2,8 +2,13 @@ package com.arduia.exchangerates.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.arduia.exchangerates.ui.common.BaseLiveData
 import com.arduia.exchangerates.ui.common.CurrencyTypeItemUiModel
+import com.arduia.exchangerates.ui.common.post
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 
@@ -26,6 +31,44 @@ class HomeViewModel @ViewModelInject constructor() : ViewModel() {
 
     private val _isEmptyRates = BaseLiveData<Boolean>()
     val isEmptyRates get() = _isEmptyRates.asLiveData()
+
+    private val _isRatesDownloading = BaseLiveData<Boolean>()
+    val isRatesDownloading get() = _isRatesDownloading.asLiveData()
+
+    init {
+        showFakeCurrencyType()
+    }
+
+    fun startSync(){
+        startFakeSync()
+    }
+
+    private fun showFakeCurrencyType(){
+        _selectedCurrencyType post CurrencyTypeItemUiModel(0, "MMK", "Myanmar")
+    }
+
+    private fun startFakeSync(){
+        viewModelScope.launch(Dispatchers.IO){
+            _isEmptyRates post false
+            _isSyncRunning post true
+            delay(3000)
+            _isSyncRunning post false
+            delay(500)
+            _isRatesDownloading post true
+            delay(2000)
+            _isRatesDownloading post false
+            _isEmptyRates post true
+            onEmptyData()
+        }
+    }
+
+    private fun onEmptyData(){
+        _selectedCurrencyType post getEmptyCurrencyType()
+        _lastUpdateDate post "- - -"
+    }
+
+    private fun getEmptyCurrencyType() =
+            CurrencyTypeItemUiModel(0, "---", "---")
 
 
 }
