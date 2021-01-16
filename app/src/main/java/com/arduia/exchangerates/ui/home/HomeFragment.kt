@@ -54,6 +54,8 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         binding.btnBackspace.setOnClickListener {
             clearEnteredCurrencyValue()
         }
+
+        binding.edtCurrencyValue.filters = arrayOf(FloatingInputFilter())
     }
 
     private fun clearEnteredCurrencyValue() {
