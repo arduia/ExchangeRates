@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -9,7 +10,7 @@
         android:id="@+id/imv"
         android:layout_width="@dimen/icon_size"
         android:layout_height="@dimen/icon_size"
-        android:layout_marginVertical="@dimen/margin_medium"
+        android:layout_marginVertical="@dimen/margin_large"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginLeft="@dimen/margin_medium"
         />
@@ -22,6 +23,8 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginLeft="@dimen/margin_medium"
+        android:textAlignment="center"
         android:text="@string/currencies_download_description"
+        tools:ignore="RtlCompat"
         />
 </LinearLayout>

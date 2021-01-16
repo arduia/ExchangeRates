@@ -4,7 +4,8 @@
     <dimen name="margin_medium">16dp</dimen>
     <dimen name="margin_large">24dp</dimen>
 
-    <dimen name="small_corner_radius">10dp</dimen>
+    <dimen name="medium_corner_radius">10dp</dimen>
+    <dimen name="small_corner_radius">5dp</dimen>
     <dimen name="icon_size">35dp</dimen>
 
     <dimen name="height_home_top_background">210dp</dimen>

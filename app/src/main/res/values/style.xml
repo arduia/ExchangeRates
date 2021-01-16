@@ -86,13 +86,21 @@
 
     <!--    ShapeAppearance-->
     <style name="ShapeAppearance.ExchangeRates.MediumComponent" parent="ShapeAppearance.MaterialComponents.MediumComponent">
-        <item name="cornerSize">@dimen/small_corner_radius</item>
+        <item name="cornerSize">@dimen/medium_corner_radius</item>
         <item name="cornerFamily">rounded</item>
     </style>
 
-    <!--    Overlay-->
     <style name="ShapeAppearanceOverlay.ExchangeRates.Circular" parent="">
         <item name="cornerSize">50%p</item>
         <item name="cornerFamily">rounded</item>
+    </style>
+
+<!--    Widget-->
+    <style name="Widget.ExchangeRates.MaterialButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="cornerRadius">@dimen/medium_corner_radius</item>
+        <item name="backgroundTint">?colorSecondary</item>
+        <item name="android:textAppearance">?textAppearanceHeadline6</item>
     </style>
 </resources>
