@@ -112,6 +112,8 @@ dependencies {
 
     //Room
     implementation "androidx.room:room-ktx:$androidx_room_version"
+    kapt "androidx.room:room-compiler:$androidx_room_version"
+    testImplementation "androidx.room:room-testing:$androidx_room_version"
 
     //Gson
     implementation "com.google.code.gson:gson:$gson_version"
