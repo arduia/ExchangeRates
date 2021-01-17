@@ -75,6 +75,8 @@ dependencies {
     def leak_canary_version = "2.5"
     def androidx_recycler_version = "1.1.0"
     def androidx_hilt_version = "1.0.0-alpha01"
+    def androidx_core_test_version = "2.1.0"
+    def mockito_test_version = "3.6.0"
 
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -125,6 +127,8 @@ dependencies {
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$androidx_hilt_version"
     //Testing
     testImplementation "junit:junit:$junit_version"
+    testImplementation "androidx.arch.core:core-testing:$androidx_core_test_version"
+    testImplementation "org.mockito:mockito-core:$mockito_test_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_test_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_test_core_version"
 
