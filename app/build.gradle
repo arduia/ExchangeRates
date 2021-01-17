@@ -5,6 +5,10 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+def apiProfile = rootProject.file("app/api.properties")
+def apiProperties = new Properties()
+apiProperties.load(new FileInputStream(apiProfile))
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
@@ -28,11 +32,16 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
+
+            buildConfigField("String", "BASE_URL", apiProperties['base_url'])
+            buildConfigField("String", "API_KEY", apiProperties['api_key'])
         }
         release {
             minifyEnabled true
             shrinkResources true
 
+            buildConfigField("String", "BASE_URL", apiProperties['base_url'])
+            buildConfigField("String", "API_KEY", apiProperties['api_key'])
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
