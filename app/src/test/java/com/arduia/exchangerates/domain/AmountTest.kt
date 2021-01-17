@@ -1,5 +1,6 @@
 package com.arduia.exchangerates.domain
 
+import com.arduia.exchangerates.domain.Amount.Companion.div
 import com.arduia.exchangerates.domain.Amount.Companion.times
 import org.hamcrest.core.Is.`is`
 import org.junit.Assert.*
@@ -82,5 +83,21 @@ class AmountTest {
 
         val amountResult = amountTwo * amountOne
         assertEquals(amountResultExcepted.format(sampleFormat), amountResult.format(sampleFormat))
+    }
+
+    @Test
+    fun shouldDivisionWork(){
+
+        val amountOne = Amount.fromFloat(300f)
+        val dividerAmount  = Amount.fromFloat(15f)
+        val amountExcepted =Amount.fromFloat(20f)
+        val sampleFormat = object : AmountFormat {
+            val numberFormat = DecimalFormat("#.##")
+            override fun format(bigDecimal: BigDecimal): String {
+                return numberFormat.format(bigDecimal)
+            }
+        }
+        val result = amountOne/dividerAmount
+        assertEquals(amountExcepted.format(sampleFormat), result.format(sampleFormat))
     }
 }
