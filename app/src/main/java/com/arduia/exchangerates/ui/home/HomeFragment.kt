@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
@@ -78,7 +77,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         viewModel.selectedCurrencyType.observe(viewLifecycleOwner, {
             with(binding) {
                 tvSelectedCurrencyCode.text = it.currencyCode
-                tvSelectedCurrencyCountry.text = it.countryName
+                tvSelectedCurrencyName.text = it.currencyName
             }
         })
 

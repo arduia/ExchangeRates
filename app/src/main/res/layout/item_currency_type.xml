@@ -20,7 +20,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_country_name"
+        android:id="@+id/tv_currency_name"
         style="?textAppearanceBody1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

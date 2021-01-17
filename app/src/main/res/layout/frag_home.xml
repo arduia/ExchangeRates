@@ -125,7 +125,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/tv_selected_currency_country"
+                    android:id="@+id/tv_selected_currency_name"
                     style="?textAppearanceBody1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

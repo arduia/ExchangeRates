@@ -25,7 +25,7 @@ class CurrenciesAdapter(private val layoutInflater: LayoutInflater) :
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = getItem(position)
         with(holder.binding) {
-            tvCountryName.text = item.countryName
+            tvCurrencyName.text = item.currencyName
             tvCurrencyCode.text = item.currencyCode
         }
     }
@@ -52,7 +52,7 @@ private val DIFF_CALLBACK
         }
 
         override fun areContentsTheSame(oldItem: CurrencyTypeItemUiModel, newItem: CurrencyTypeItemUiModel): Boolean {
-            return (oldItem.countryName == newItem.countryName) and
+            return (oldItem.currencyName == newItem.currencyName) and
                     (oldItem.currencyCode == newItem.currencyCode) and
                     (oldItem.id == newItem.id)
         }

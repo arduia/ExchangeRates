@@ -6,5 +6,5 @@ package com.arduia.exchangerates.ui.common
 data class CurrencyTypeItemUiModel(
         val id: Int,
         val currencyCode: String,
-        val countryName: String
+        val currencyName: String
 )

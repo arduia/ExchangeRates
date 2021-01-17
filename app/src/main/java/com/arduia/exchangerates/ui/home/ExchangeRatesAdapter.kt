@@ -25,7 +25,7 @@ class ExchangeRatesAdapter(private val layoutInflater: LayoutInflater) :
         val item = getItem(position)
         with(holder.binding) {
             tvCurrencyCode.text = item.currencyCode
-            tvCurrencyCountryName.text = item.countryName
+            tvCurrencyName.text = item.currencyName
             tvExchangeValue.text = item.exchangeRate
             tvExchangeBalance.text = item.exchangeBalance
         }
@@ -52,8 +52,8 @@ private val DIFF_CALLBACK
         }
 
         override fun areContentsTheSame(oldItem: ExchangeRateItemUiModel, newItem: ExchangeRateItemUiModel): Boolean {
-            return (oldItem.countryName == newItem.countryName) and
-                    (oldItem.currencyCode == newItem.countryName) and
+            return (oldItem.currencyName == newItem.currencyName) and
+                    (oldItem.currencyCode == newItem.currencyName) and
                     (oldItem.exchangeRate == newItem.exchangeRate) and
                     (oldItem.exchangeBalance == newItem.exchangeBalance)
         }

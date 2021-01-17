@@ -6,7 +6,7 @@ package com.arduia.exchangerates.ui.home
 data class ExchangeRateItemUiModel(
         val id: Int,
         val currencyCode: String,
-        val countryName: String,
+        val currencyName: String,
         val exchangeRate: String,
         val exchangeBalance: String
 )

@@ -46,7 +46,7 @@ class ExchangeRateDatabaseTest{
 
         currencyTypeDao.insertAll(users)
 
-        val insertedType = currencyTypeDao.getByCountryCode(currencyType.currencyCode)
+        val insertedType = currencyTypeDao.getByCurrencyCode(currencyType.currencyCode)
 
         assertThat("USD", `is`(insertedType?.currencyCode))
         assertThat(currencyType.currencyName, `is`(insertedType?.currencyName))
@@ -55,7 +55,7 @@ class ExchangeRateDatabaseTest{
         val secondCurrencyType = CurrencyTypeDto(0, "MMK", "Myanmar Kyat")
         currencyTypeDao.insertAll(listOf(secondCurrencyType))
 
-        val secondInsertedType = currencyTypeDao.getByCountryCode(secondCurrencyType.currencyCode)
+        val secondInsertedType = currencyTypeDao.getByCurrencyCode(secondCurrencyType.currencyCode)
 
         assertEquals(secondCurrencyType.currencyCode, secondInsertedType?.currencyCode)
         assertEquals(2, secondInsertedType?.id)

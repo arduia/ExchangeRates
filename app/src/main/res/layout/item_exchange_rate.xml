@@ -22,7 +22,7 @@
         />
 
     <TextView
-        android:id="@+id/tv_currency_country_name"
+        android:id="@+id/tv_currency_name"
         style="?textAppearanceBody2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
         style="?textAppearanceCaption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/tv_currency_country_name"
+        android:layout_alignBaseline="@id/tv_currency_name"
         android:layout_alignEnd="@id/tv_exchange_value"
         android:layout_alignRight="@id/tv_exchange_value"
         android:textColor="?colorSecondary"
@@ -63,7 +63,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?android:dividerHorizontal"
-        android:layout_below="@id/tv_currency_country_name"
+        android:layout_below="@id/tv_currency_name"
         android:layout_marginHorizontal="@dimen/margin_medium"
         />
 
