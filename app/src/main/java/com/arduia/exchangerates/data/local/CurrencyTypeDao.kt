@@ -18,7 +18,7 @@ interface CurrencyTypeDao {
     fun getAllDataSource(): DataSource.Factory<Int, CurrencyTypeDto>
 
     @Query("SELECT * FROM `currency_types` WHERE currencyCode =:code LIMIT 1")
-    fun getCurrencyCode(code: String): Flow<CurrencyTypeDto>
+    fun getByCurrencyCodeFlow(code: String): Flow<CurrencyTypeDto>
 
     @Query("SELECT * FROM `currency_types` WHERE currencyCode =:code LIMIT 1")
     suspend fun getByCurrencyCode(code: String): CurrencyTypeDto?
