@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    >
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/tv_currency_code"
@@ -18,8 +17,7 @@
         android:layout_marginTop="@dimen/margin_medium"
         android:layout_toStartOf="@id/tv_exchange_value"
         android:layout_toLeftOf="@id/tv_exchange_value"
-        tools:text="USD"
-        />
+        tools:text="USD" />
 
     <TextView
         android:id="@+id/tv_currency_name"
@@ -29,9 +27,15 @@
         android:layout_below="@id/tv_currency_code"
         android:layout_alignStart="@id/tv_currency_code"
         android:layout_alignLeft="@id/tv_currency_code"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
         android:layout_marginBottom="@dimen/margin_medium"
-        tools:text="United State Dollar"
-        />
+        android:layout_toStartOf="@id/tv_exchange_balance"
+        android:layout_toLeftOf="@id/tv_exchange_balance"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        tools:text="United State Dollar" />
 
     <TextView
         android:id="@+id/tv_exchange_value"
@@ -43,8 +47,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginEnd="@dimen/margin_medium"
         android:layout_marginRight="@dimen/margin_medium"
-        tools:text="0.194"
-        />
+        tools:text="0.194" />
 
     <TextView
         android:id="@+id/tv_exchange_balance"
@@ -55,17 +58,15 @@
         android:layout_alignEnd="@id/tv_exchange_value"
         android:layout_alignRight="@id/tv_exchange_value"
         android:textColor="?colorSecondary"
-        tools:text="1 MMK = 4.3 USD"
-        />
+        tools:text="1 MMK = 4.3 USD" />
 
     <View
         android:id="@+id/view_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="?android:dividerHorizontal"
         android:layout_below="@id/tv_currency_name"
         android:layout_marginHorizontal="@dimen/margin_medium"
-        />
+        android:background="?android:dividerHorizontal" />
 
 
 </RelativeLayout>
