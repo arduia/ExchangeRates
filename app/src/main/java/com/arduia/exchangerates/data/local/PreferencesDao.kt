@@ -19,4 +19,6 @@ interface PreferencesDao {
 
     fun getLastSyncDateSync(): Long
 
+    fun getLastSyncDateFlow(): Flow<Long>
+
 }

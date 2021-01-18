@@ -19,4 +19,5 @@ interface PreferencesRepository {
 
     fun getLastSyncDateSync(): Result<Long>
 
+    fun getLastSyncDateFlow(): FlowResult<Long>
 }

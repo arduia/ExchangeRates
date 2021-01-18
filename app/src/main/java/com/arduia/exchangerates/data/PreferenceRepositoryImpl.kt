@@ -34,4 +34,7 @@ class PreferenceRepositoryImpl @Inject constructor(
         return result { dao.getLastSyncDateSync() }
     }
 
+    override fun getLastSyncDateFlow(): FlowResult<Long> {
+        return dao.getLastSyncDateFlow().asResultFlow()
+    }
 }
