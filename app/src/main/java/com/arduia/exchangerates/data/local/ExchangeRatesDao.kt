@@ -13,7 +13,7 @@ import com.arduia.exchangerates.data.ExchangeRateDto
 @Dao
 interface ExchangeRatesDao {
 
-    @Query("SELECT cache_exchange_rates.id,cache_exchange_rates.currencyCode, cache_exchange_rates.exchangeRate, currency_types.currencyName FROM `cache_exchange_rates` INNER JOIN `currency_types` ON cache_exchange_rates.currencyCode=currency_types.currencyCode & cache_exchange_rates.currencyCode!=:selectedCurrencyCode ")
+    @Query("SELECT cache_exchange_rates.id,cache_exchange_rates.currencyCode, cache_exchange_rates.exchangeRate, currency_types.currencyName FROM `cache_exchange_rates` INNER JOIN `currency_types` ON cache_exchange_rates.currencyCode=currency_types.currencyCode WHERE cache_exchange_rates.currencyCode!=:selectedCurrencyCode ORDER BY cache_exchange_rates.currencyCode ASC")
     fun getAllDataSource(selectedCurrencyCode: String): DataSource.Factory<Int, ExchangeRateDto>
 
 }
