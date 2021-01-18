@@ -20,4 +20,7 @@ abstract class ExchangeRateDatabase : RoomDatabase() {
 
     abstract val exchangeRateDao: ExchangeRatesDao
 
+    companion object{
+        const val DATABASE_NAME = "cache_exchange_rates.db"
+    }
 }

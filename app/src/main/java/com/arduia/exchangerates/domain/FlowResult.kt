@@ -33,7 +33,7 @@ fun <T> FlowResult<T>.awaitValueOrError(): T = runBlocking<T> {
 
 class AbortFlowException : CancellationException()
 
-fun <T> FlowResult<T>.onSuccess(success: (data: T) -> Unit): FlowResult<T> {
+fun <T> FlowResult<T>.onSuccess(success: suspend (data: T) -> Unit): FlowResult<T> {
     return onEach {
         if (it is SuccessResult) success.invoke(it.data)
     }

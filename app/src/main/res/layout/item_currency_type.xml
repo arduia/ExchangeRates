@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_currencies"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    >
+    android:background="?selectableItemBackground">
 
     <TextView
         android:id="@+id/tv_currency_code"
@@ -16,28 +17,26 @@
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginLeft="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_medium"
-        tools:text="USD"
-        />
+        tools:text="USD" />
 
     <TextView
         android:id="@+id/tv_currency_name"
         style="?textAppearanceBody1"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginEnd="@dimen/margin_medium"
-        android:layout_marginRight="@dimen/margin_medium"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:maxLines="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/tv_currency_code"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginRight="@dimen/margin_medium"
         android:layout_toEndOf="@id/tv_currency_code"
         android:layout_toRightOf="@id/tv_currency_code"
-        tools:text="Untied State Dollar"
-        />
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        tools:text="Untied State Dollar" />
 
     <View
         android:id="@+id/divider_currency_type"
@@ -47,7 +46,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginHorizontal="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_medium"
-        android:background="?android:dividerHorizontal"
-        />
+        android:background="?android:dividerHorizontal" />
 
 </RelativeLayout>

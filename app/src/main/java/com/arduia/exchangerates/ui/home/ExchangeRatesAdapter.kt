@@ -3,16 +3,18 @@ package com.arduia.exchangerates.ui.home
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.arduia.exchangerates.databinding.ItemExchangeRateBinding
+import java.lang.Exception
 
 /**
  * Created by Aung Ye Htet at 16/01/2021 6:34 PM.
  */
 class ExchangeRatesAdapter(private val layoutInflater: LayoutInflater) :
-        ListAdapter<ExchangeRateItemUiModel, ExchangeRatesAdapter.VH>(DIFF_CALLBACK) {
+        PagedListAdapter<ExchangeRateItemUiModel, ExchangeRatesAdapter.VH>(DIFF_CALLBACK) {
 
     private var onItemClickListener: ((ExchangeRateItemUiModel) -> Unit)? = null
 
@@ -22,7 +24,7 @@ class ExchangeRatesAdapter(private val layoutInflater: LayoutInflater) :
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val item = getItem(position)
+        val item = getItem(position) ?: return
         with(holder.binding) {
             tvCurrencyCode.text = item.currencyCode
             tvCurrencyName.text = item.currencyName
@@ -39,7 +41,7 @@ class ExchangeRatesAdapter(private val layoutInflater: LayoutInflater) :
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position == -1) return // When ViewHolder is not ready yet!
-            val item = getItem(position)
+            val item = getItem(position) ?: throw Exception("getItem position $position not found!")
             onItemClickListener?.invoke(item)
         }
     }

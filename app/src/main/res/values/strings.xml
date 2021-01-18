@@ -18,4 +18,5 @@
     <string name="exit">Exit</string>
     <string name="updating">Updating..</string>
     <string name="prefix_version">Version</string>
+    <string name="item_select_error">Item Select Error</string>
 </resources>

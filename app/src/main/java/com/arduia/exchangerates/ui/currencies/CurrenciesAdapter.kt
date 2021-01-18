@@ -3,6 +3,8 @@ package com.arduia.exchangerates.ui.currencies
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagedList
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +15,7 @@ import com.arduia.exchangerates.ui.common.CurrencyTypeItemUiModel
  * Created by Aung Ye Htet at 16/01/2021 6:38 PM.
  */
 class CurrenciesAdapter(private val layoutInflater: LayoutInflater) :
-        ListAdapter<CurrencyTypeItemUiModel, CurrenciesAdapter.VH>(DIFF_CALLBACK) {
+        PagedListAdapter<CurrencyTypeItemUiModel, CurrenciesAdapter.VH>(DIFF_CALLBACK) {
 
     private var onItemClickListener: ((CurrencyTypeItemUiModel) -> Unit)? = null
 
@@ -23,22 +25,25 @@ class CurrenciesAdapter(private val layoutInflater: LayoutInflater) :
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val item = getItem(position)
+        val item = getItem(position) ?: throw Exception("getItem at position($position) not found!")
         with(holder.binding) {
             tvCurrencyName.text = item.currencyName
             tvCurrencyCode.text = item.currencyCode
         }
     }
 
-    private fun setOnItemClickListener(listener: ((CurrencyTypeItemUiModel) -> Unit)?) {
-        this.onItemClickListener
+    fun setOnItemClickListener(listener: ((CurrencyTypeItemUiModel) -> Unit)?) {
+        this.onItemClickListener = listener
     }
 
     inner class VH(val binding: ItemCurrencyTypeBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+        init {
+            binding.rlCurrencies.setOnClickListener(this)
+        }
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position == -1) return //When viewHolder is not ready.
-            val item = getItem(position)
+            val item = getItem(position) ?: throw Exception("getItem at position($position) not found!")
             onItemClickListener?.invoke(item)
         }
     }
