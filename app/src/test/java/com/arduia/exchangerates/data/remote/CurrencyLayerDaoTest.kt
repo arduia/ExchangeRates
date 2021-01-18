@@ -12,12 +12,12 @@ class CurrencyLayerDaoTest {
     fun testAPICalls() = runBlocking {
         val gson = GsonBuilder()
             .registerTypeAdapter(
-                GetCurrencyLive.Response::class.java,
-                GetCurrencyLive.GetCurrencyLiveDeserializer()
+                GetCurrencyLiveDto.Response::class.java,
+                GetCurrencyLiveDto.GetCurrencyLiveDeserializer()
             )
             .registerTypeAdapter(
-                GetCurrencyNameList.Response::class.java,
-                GetCurrencyNameList.CurrencyListDeserializer()
+                GetCurrencyNameListDto.Response::class.java,
+                GetCurrencyNameListDto.CurrencyListDeserializer()
             )
             .create()
         val retrofit = Retrofit.Builder()

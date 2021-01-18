@@ -11,12 +11,12 @@ import retrofit2.http.Query
 interface CurrencyLayerDao {
 
     @GET("/live")
-    fun getCurrencyLive(@Query("access_key") accessKey: String = BuildConfig.API_KEY, @Query("source") source: String):
-            Call<GetCurrencyLive.Response>
+    fun getCurrencyLive(@Query("access_key") accessKey: String = BuildConfig.API_KEY, @Query("source") source: String = "USD"):
+            Call<GetCurrencyLiveDto.Response>
 
     @GET("/list")
     fun getCurrencyNameList(@Query("access_key") accessKey: String = BuildConfig.API_KEY):
-            Call<GetCurrencyNameList.Response>
+            Call<GetCurrencyNameListDto.Response>
 
 
 }

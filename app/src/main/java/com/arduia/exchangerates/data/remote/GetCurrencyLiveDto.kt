@@ -9,16 +9,16 @@ import java.lang.reflect.Type
 /**
  * Created by Aung Ye Htet at 17/01/2021 9:25PM.
  */
-class GetCurrencyLive {
+class GetCurrencyLiveDto {
     data class Response(
 
-        val success: Boolean,
+            val success: Boolean,
 
-        val source: String?,
+            val source: String?,
 
-        val exchangeRate: List<CurrencyRatePair>?,
+            val exchangeRate: List<CurrencyRatePairDto>?,
 
-        val error: ErrorInfo?
+            val error: ErrorInfo?
     )
 
     data class ErrorInfo(val code: Int, val info: String)
@@ -55,14 +55,14 @@ class GetCurrencyLive {
             val sourceElement = jsonObject.get("source")
             val valueSource = sourceElement.asString
 
-            val valueExchangeRate = mutableListOf<CurrencyRatePair>()
+            val valueExchangeRate = mutableListOf<CurrencyRatePairDto>()
             val exchangeRateObject = jsonObject.get("quotes").asJsonObject
             exchangeRateObject.keySet().forEach {
                 //RateValue 3.67302
                 val value = exchangeRateObject.get(it).asString
                 //Remove Source Prefix. eg USDAED => source = USD, code= AED
                 val code = it.substringAfter(valueSource)
-                val item = CurrencyRatePair(code = code, rate = value)
+                val item = CurrencyRatePairDto(code = code, rate = value)
                 valueExchangeRate.add(item)
             }
 
@@ -76,4 +76,4 @@ class GetCurrencyLive {
     }
 }
 
-data class CurrencyRatePair(val code: String, val rate: String)
+data class CurrencyRatePairDto(val code: String, val rate: String)

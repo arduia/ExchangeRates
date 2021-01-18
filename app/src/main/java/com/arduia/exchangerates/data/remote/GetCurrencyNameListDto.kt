@@ -1,27 +1,23 @@
 package com.arduia.exchangerates.data.remote
 
-import com.arduia.exchangerates.BuildConfig
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Exception
 import java.lang.reflect.Type
 
 /**
  * Created by Aung Ye Htet at 17/01/2021 9:29PM.
  */
-class GetCurrencyNameList {
+class GetCurrencyNameListDto {
 
     data class Response(
 
-        val success: Boolean,
+            val success: Boolean,
 
-        val currencyList: List<CurrencyNamePair>?,
+            val currencyList: List<CurrencyNamePairDto>?,
 
-        val errorInfo: ErrorInfo?
+            val errorInfo: ErrorInfo?
     )
 
     data class ErrorInfo(val code: Int, val info: String, val type: String)
@@ -55,11 +51,11 @@ class GetCurrencyNameList {
             }
 
             val currenciesObject = jsonObject.get("currencies").asJsonObject
-            val valueCurrenciesList = mutableListOf<CurrencyNamePair>()
+            val valueCurrenciesList = mutableListOf<CurrencyNamePairDto>()
 
             currenciesObject.keySet().forEach {
                 val value = currenciesObject.get(it).asString
-                val item = CurrencyNamePair(code = it, name = value)
+                val item = CurrencyNamePairDto(code = it, name = value)
                 valueCurrenciesList.add(item)
             }
 
@@ -68,4 +64,4 @@ class GetCurrencyNameList {
     }
 }
 
-data class CurrencyNamePair(val code: String, val name: String)
+data class CurrencyNamePairDto(val code: String, val name: String)
