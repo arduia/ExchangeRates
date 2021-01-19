@@ -44,14 +44,17 @@ class HomeViewModel @ViewModelInject constructor(
     private val _selectedCurrencyType = BaseLiveData<CurrencyTypeItemUiModel>()
     val selectedCurrencyType get() = _selectedCurrencyType.asLiveData()
 
-    private val _enteredCurrencyValue = BaseLiveData<BigDecimal>()
-    val enteredCurrencyValue get() = _enteredCurrencyValue.asLiveData()
-
     private val _onNoConnection = EventLiveData<Unit>()
     val onNoConnection get() = _onNoConnection.asLiveData()
 
-    private val _currentRatePostfix = BaseLiveData<String>()
-    val currentRatePostfix get() = _currentRatePostfix.asLiveData()
+    val currentRatePostfix
+        get() = _enteredCurrency.asFlow()
+                .combine(_selectedCurrencyType.asFlow()) { value, type ->
+                    val amount = Amount.fromString(value)
+                    "$amount ${type.currencyCode}"
+                }.asLiveData()
+
+    private val _enteredCurrency = BaseLiveData<String>()
 
     val exchangeRates = Transformations.switchMap(selectedCurrencyType) {
         createExchangeRatePagedListLiveData(it.currencyCode)
@@ -72,6 +75,7 @@ class HomeViewModel @ViewModelInject constructor(
         observeLastUpdateDate()
         observeSyncState()
         syncData()
+        _enteredCurrency post DEFAULT_ENTER_CURRENCY
     }
 
     private fun syncData() {
@@ -129,17 +133,14 @@ class HomeViewModel @ViewModelInject constructor(
             CurrencyTypeItemUiModel(0, EMPTY_VALUE_TEXT, EMPTY_VALUE_TEXT)
 
     fun onEnterCurrencyValue(value: String) {
-        val currencyValue = if (value.isEmpty()) "1" else value
 
-        updateExchangeRateDescription(value)
-        rateConverter.setEnterdValue(Amount.fromString(currencyValue))
+        val currencyValue = if (value.isEmpty()) DEFAULT_ENTER_CURRENCY else value
+
+        _enteredCurrency post currencyValue
+        val amount = Amount.fromString(currencyValue)
+        rateConverter.setEnterdValue(amount)
+
         exchangeRates.value?.dataSource?.invalidate()
-    }
-
-    private fun updateExchangeRateDescription(value: String) {
-        val selectedCurrencyCode =
-                selectedCurrencyType.value?.currencyCode ?: "" //TODO Should be onChain
-        _currentRatePostfix post "$value $selectedCurrencyCode"
     }
 
     fun startSync() {
@@ -175,5 +176,6 @@ class HomeViewModel @ViewModelInject constructor(
 
     companion object {
         private const val EMPTY_VALUE_TEXT = "---"
+        private const val DEFAULT_ENTER_CURRENCY = "1.00"
     }
 }
