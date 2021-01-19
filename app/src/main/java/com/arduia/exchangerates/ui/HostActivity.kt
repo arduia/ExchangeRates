@@ -2,8 +2,10 @@ package com.arduia.exchangerates.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import com.arduia.exchangerates.R
 import com.arduia.exchangerates.databinding.FragHomeBinding
+import com.arduia.exchangerates.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -12,9 +14,12 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HostActivity : AppCompatActivity() {
 
+    private val viewModel by viewModels<HostViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activ_host)
+        viewModel.hashCode()
     }
 
 }
