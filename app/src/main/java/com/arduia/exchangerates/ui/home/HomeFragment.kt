@@ -176,7 +176,8 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
             exitFromHome()
         }
         noConnectionDialog?.setOnTryAgainClickListener {
-
+            noConnectionDialog?.dismiss()
+            viewModel.startSync()
         }
         noConnectionDialog?.show()
     }

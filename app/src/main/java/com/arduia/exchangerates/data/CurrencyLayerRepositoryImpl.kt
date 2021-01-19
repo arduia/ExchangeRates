@@ -3,7 +3,6 @@ package com.arduia.exchangerates.data
 import androidx.paging.DataSource
 import com.arduia.exchangerates.data.exception.ServerErrorException
 import com.arduia.exchangerates.data.ext.asResultFlow
-import com.arduia.exchangerates.data.ext.repoErrorResult
 import com.arduia.exchangerates.data.ext.result
 import com.arduia.exchangerates.data.ext.resultNullable
 import com.arduia.exchangerates.data.local.CacheExchangeRateDao
@@ -16,6 +15,7 @@ import com.arduia.exchangerates.domain.FlowResult
 import com.arduia.exchangerates.domain.Result
 import com.arduia.exchangerates.domain.SuccessResult
 import retrofit2.Call
+import java.lang.Exception
 import javax.inject.Inject
 
 /**
@@ -48,7 +48,7 @@ class CurrencyLayerRepositoryImpl @Inject constructor(
         return currencyTypeDao.getAllDataSource()
     }
 
-    override fun getFilteredAllDataSource(query: String):  DataSource.Factory<Int, CurrencyTypeDto> {
+    override fun getFilteredAllDataSource(query: String): DataSource.Factory<Int, CurrencyTypeDto> {
         return currencyTypeDao.getFilteredAllDataSource(query)
     }
 
@@ -76,14 +76,14 @@ class CurrencyLayerRepositoryImpl @Inject constructor(
         return try {
             val call = io.invoke().execute()
 
-            if (call.isSuccessful.not()) return repoErrorResult(ServerErrorException(404, "not successful"))
+            if (call.isSuccessful.not()) return ErrorResult(ServerErrorException(404, "not successful"))
 
             val response = call.body()
-                    ?: return repoErrorResult(ServerErrorException(404, "body not found!"))
+                    ?: return ErrorResult(ServerErrorException(404, "body not found!"))
 
             return SuccessResult(response)
-        } catch (e: Throwable) {
-            repoErrorResult(e)
+        } catch (e: Exception) {
+            ErrorResult(e)
         }
     }
 }

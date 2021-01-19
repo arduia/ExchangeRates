@@ -1,11 +1,10 @@
 package com.arduia.exchangerates.data
 
-import com.arduia.exchangerates.data.exception.CacheException
 import com.arduia.exchangerates.data.exception.ServerErrorException
 import com.arduia.exchangerates.domain.ErrorResult
 import com.arduia.exchangerates.domain.Result
 import com.arduia.exchangerates.domain.SuccessResult
-import com.arduia.exchangerates.domain.getDataOrError
+import com.arduia.exchangerates.domain.getDataOrThrow
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
@@ -41,7 +40,7 @@ class CacheSyncManagerImpl @Inject constructor(
         Timber.d("syncNow $force")
         try {
             progressChannel.offer(SyncState.Initial)
-            if (isOverMinimumRefreshInterval() || force){
+            if (isOverMinimumRefreshInterval() || force) {
                 return startSyncProgress()
             }
             progressChannel.offer(SyncState.Finished)
@@ -49,7 +48,7 @@ class CacheSyncManagerImpl @Inject constructor(
 
         } catch (e: Exception) {
             progressChannel.offer(SyncState.Finished)
-            return cacheErrorResult(e)
+            return ErrorResult(e)
         }
     }
 
@@ -57,12 +56,12 @@ class CacheSyncManagerImpl @Inject constructor(
 
 
         progressChannel.offer(SyncState.CurrenciesDownloading)
-        val nameResponse = currencyLayerRepository.getDownloadCurrencyNames().getDataOrError()
+        val nameResponse = currencyLayerRepository.getDownloadCurrencyNames().getDataOrThrow()
 
         if (nameResponse.success.not()) throw ServerErrorException(nameResponse.errorInfo!!.code, nameResponse.errorInfo.info)
 
         progressChannel.offer(SyncState.ExchangeRateDownloading)
-        val rateResponse = currencyLayerRepository.getDownloadedUSDCurrencyRates().getDataOrError()
+        val rateResponse = currencyLayerRepository.getDownloadedUSDCurrencyRates().getDataOrThrow()
         if (rateResponse.success.not()) throw ServerErrorException(rateResponse.error!!.code, rateResponse.error.info)
 
         val rates = rateResponse.exchangeRate?.map {
@@ -86,14 +85,15 @@ class CacheSyncManagerImpl @Inject constructor(
 
     private suspend fun isOverMinimumRefreshInterval(): Boolean {
         val currentDate = Date().time
-        val syncDate = preferencesRepository.getLastSyncDateSync().getDataOrError()
+        val syncDate = preferencesRepository.getLastSyncDateSync().getDataOrThrow()
         return (currentDate - syncDate) >= REFRESH_INTERVAL
     }
 
-    override fun syncInBackground(scope: CoroutineScope, force: Boolean) {
+    override fun syncInBackground(scope: CoroutineScope, force: Boolean, onFinished: (Result<SyncState.Finished>) -> Unit) {
         currentJob?.cancel()
         currentJob = scope.launch(Dispatchers.IO) {
-            syncNow(force)
+            val result = syncNow(force)
+            onFinished.invoke(result)
         }
     }
 
@@ -101,7 +101,7 @@ class CacheSyncManagerImpl @Inject constructor(
         this.autoSyncCoroutineScope = scope
         if (scope == null) return
         scope.launch(Dispatchers.IO) {
-            val time = preferencesRepository.getLastSyncDateSync().getDataOrError()
+            val time = preferencesRepository.getLastSyncDateSync().getDataOrThrow()
             updateAutoRefreshTimer(time)
         }
     }
@@ -125,8 +125,6 @@ class CacheSyncManagerImpl @Inject constructor(
     }
 
     companion object {
-        private const val REFRESH_INTERVAL =  1860_000L //ms =  31min
+        private const val REFRESH_INTERVAL = 1860_000L //ms =  31min
     }
 }
-
-private fun cacheErrorResult(e: Exception) = ErrorResult(CacheException(cause = e))

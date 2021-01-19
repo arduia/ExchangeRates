@@ -2,23 +2,19 @@ package com.arduia.exchangerates.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arduia.exchangerates.data.*
-import com.arduia.exchangerates.data.exception.CacheException
+import com.arduia.exchangerates.data.exception.NoConnectionException
+import com.arduia.exchangerates.data.exception.NoInternetException
 import com.arduia.exchangerates.domain.*
 import com.arduia.exchangerates.ui.common.*
 import com.arduia.exchangerates.ui.home.format.DateFormatter
-import com.arduia.exchangerates.ui.home.format.SyncDateFormatter
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.math.BigDecimal
 import java.util.*
-import javax.inject.Provider
 
 
 /**
@@ -80,16 +76,15 @@ class HomeViewModel @ViewModelInject constructor(
 
     private fun syncData() {
         viewModelScope.launch(Dispatchers.IO) {
-
-            Timber.d("Sync")
+            Timber.d("sync now")
             val result = cacheSyncManager.syncNow()
             if (result is ErrorResult) {
-                val exception = result.exception
-                if (exception is CacheException) {
-                    Timber.d("cache Exception")
-
+                _onNoConnection post UnitEvent
+                when (result.exception.cause) {
+                    is NoInternetException, is NoConnectionException -> {
+                        _onNoConnection post UnitEvent
+                    }
                 }
-
             }
         }
     }
@@ -110,8 +105,8 @@ class HomeViewModel @ViewModelInject constructor(
                 .onSuccess {
                     Timber.d("getSelectedCurrencyType")
                     val type =
-                            currencyLayerRepository.getCurrencyTypeByCurrencyCode(it).getDataOrError()
-                    val rate = exchangeRatesRepository.getCurrencyRateByCurrencyCode(it).getDataOrError()
+                            currencyLayerRepository.getCurrencyTypeByCurrencyCode(it).getDataOrThrow()
+                    val rate = exchangeRatesRepository.getCurrencyRateByCurrencyCode(it).getDataOrThrow()
 
                     if (rate != null) {
                         rateConverter.setUSDRate(rate.exchangeRate)
@@ -144,7 +139,16 @@ class HomeViewModel @ViewModelInject constructor(
     }
 
     fun startSync() {
-        cacheSyncManager.syncInBackground(viewModelScope, force = true)
+        cacheSyncManager.syncInBackground(viewModelScope, force = true) { result ->
+            if (result is ErrorResult) {
+                _onNoConnection post UnitEvent
+                when (result.exception.cause) {
+                    is NoInternetException, is NoConnectionException -> {
+                        _onNoConnection post UnitEvent
+                    }
+                }
+            }
+        }
     }
 
     private fun observeLastUpdateDate() {

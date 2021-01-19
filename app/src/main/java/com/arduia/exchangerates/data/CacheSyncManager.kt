@@ -13,17 +13,17 @@ interface CacheSyncManager {
 
     suspend fun syncNow(force: Boolean = false): Result<SyncState.Finished>
 
-    fun syncInBackground(scope: CoroutineScope, force: Boolean = false)
+    fun syncInBackground(scope: CoroutineScope, force: Boolean = false, onFinished: (Result<SyncState.Finished>) -> Unit = {})
 
     fun setAutoRefresh(scope: CoroutineScope?)
 
 }
 
-sealed class SyncState{
-    object CurrenciesDownloading: SyncState()
-    object ExchangeRateDownloading: SyncState()
-    object Finished: SyncState()
-    object Initial: SyncState()
+sealed class SyncState {
+    object CurrenciesDownloading : SyncState()
+    object ExchangeRateDownloading : SyncState()
+    object Finished : SyncState()
+    object Initial : SyncState()
 }
 
 // Progress Flow: Finished -> Initial -> CurrenciesDownloading -> ExchangeRateDownloading -> Finished

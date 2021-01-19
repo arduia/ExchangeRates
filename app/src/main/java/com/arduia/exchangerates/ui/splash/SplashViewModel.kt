@@ -4,14 +4,11 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arduia.exchangerates.data.*
-import com.arduia.exchangerates.domain.ErrorResult
-import com.arduia.exchangerates.domain.SuccessResult
-import com.arduia.exchangerates.domain.getDataOrError
+import com.arduia.exchangerates.domain.getDataOrThrow
 import com.arduia.exchangerates.ui.common.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * Cerated by Aung Ye Htet 16/01/2021 6:51 PM.
@@ -36,7 +33,7 @@ class SplashViewModel @ViewModelInject constructor(
             delay(SPLASH_INITIAL_SHOW_TIME)
             _isLoading post true
             cacheSyncManager.syncNow()
-            val selectedType = preferencesRepository.getSelectedCurrencyTypeSync().getDataOrError()
+            val selectedType = preferencesRepository.getSelectedCurrencyTypeSync().getDataOrThrow()
             if (selectedType.isEmpty()) {
                 preferencesRepository.setSelectedCurrencyType("USD")
             }

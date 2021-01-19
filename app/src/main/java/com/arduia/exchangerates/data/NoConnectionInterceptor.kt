@@ -5,6 +5,8 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import com.arduia.exchangerates.data.exception.NoConnectionException
+import com.arduia.exchangerates.data.exception.NoInternetException
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -17,7 +19,7 @@ import javax.inject.Singleton
 class NoConnectionInterceptor @Inject constructor(private val context: Context) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         return if (!isConnectionOn()) {
-            throw NoConnectivityException()
+            throw NoConnectionException()
         } else if(!isInternetAvailable()) {
             throw NoInternetException()
         } else {
@@ -58,15 +60,5 @@ class NoConnectionInterceptor @Inject constructor(private val context: Context) 
             false
         }
 
-    }
-
-    class NoConnectivityException : IOException() {
-        override val message: String
-            get() = "No network available, please check your WiFi or Data connection"
-    }
-
-    class NoInternetException() : IOException() {
-        override val message: String
-            get() = "No internet available, please check your connected WIFi or Data"
     }
 }

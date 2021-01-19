@@ -43,10 +43,14 @@ fun <T> Result<T>.successOr(fallback: T): T {
 val <T> Result<T>.data: T?
     get() = (this as? Result.Success)?.data
 
-fun <T> Result<T>.getDataOrError(): T{
-    if(this is Result.Success) return data
-    else throw Exception("Data not fount in this Result($this)")
+fun <T> Result<T>.getDataOrThrow(): T{
+    when(this){
+        is Result.Success -> return data
+        is Result.Loading -> throw Exception("Data not fount in this Result ")
+        is Result.Error -> throw exception
+    }
 }
+
 
 
 typealias ErrorResult = Result.Error

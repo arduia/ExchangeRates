@@ -4,15 +4,12 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.arduia.exchangerates.data.CurrencyLayerRepository
 import com.arduia.exchangerates.data.CurrencyTypeDto
 import com.arduia.exchangerates.data.PreferencesRepository
 import com.arduia.exchangerates.domain.Mapper
 import com.arduia.exchangerates.domain.SuccessResult
-import com.arduia.exchangerates.domain.getDataOrError
 import com.arduia.exchangerates.ui.common.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
