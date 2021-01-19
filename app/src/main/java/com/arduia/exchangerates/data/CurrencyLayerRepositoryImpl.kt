@@ -39,6 +39,7 @@ class CurrencyLayerRepositoryImpl @Inject constructor(
         return result { cacheExchangeRateDao.getAll() }
     }
 
+
     override suspend fun insertAllCurrencyType(items: List<CurrencyTypeDto>): Result<Unit> {
         return result { currencyTypeDao.insertAll(items) }
     }

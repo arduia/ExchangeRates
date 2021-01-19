@@ -15,6 +15,7 @@ interface CurrencyLayerRepository {
     //CacheExchangeRate
     suspend fun insertAllCacheExchangeRate(item: List<CacheExchangeRateDto>): Result<Unit>
 
+
     suspend fun deleteAllCacheExchangeRate(): Result<Unit>
 
     suspend fun getAllCacheExchangeRate(): Result<List<CacheExchangeRateDto>>

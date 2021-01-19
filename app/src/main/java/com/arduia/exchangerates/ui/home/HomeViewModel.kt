@@ -1,10 +1,7 @@
 package com.arduia.exchangerates.ui.home
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -35,7 +32,7 @@ class HomeViewModel @ViewModelInject constructor(
         private val dateFormatter: DateFormatter,
         private val currencyTypeMapper: Mapper<CurrencyTypeDto, CurrencyTypeItemUiModel>,
         private val cacheSyncManager: CacheSyncManager
-        ) : ViewModel() {
+) : ViewModel() {
 
     private val _isSyncRunning = BaseLiveData<Boolean>()
     val isSyncRunning get() = _isSyncRunning.asLiveData()
@@ -48,9 +45,6 @@ class HomeViewModel @ViewModelInject constructor(
 
     private val _enteredCurrencyValue = BaseLiveData<BigDecimal>()
     val enteredCurrencyValue get() = _enteredCurrencyValue.asLiveData()
-
-    private val _isEmptyRates = BaseLiveData<Boolean>()
-    val isEmptyRates get() = _isEmptyRates.asLiveData()
 
     private val _isRatesDownloading = BaseLiveData<Boolean>()
     val isRatesDownloading get() = _isRatesDownloading.asLiveData()
@@ -65,10 +59,14 @@ class HomeViewModel @ViewModelInject constructor(
         createExchangeRatePagedListLiveData(it.currencyCode)
     }
 
+    val isEmptyRates
+        get() = exchangeRates.switchMap {
+            BaseLiveData(it.isEmpty())
+        }
+
     private val exchangeRateMapper =
-            exchangeRateMapperFactory.create(rateConverter) CurrencyTypeProvider@{
-                val type = selectedCurrencyType.value?.currencyCode
-                return@CurrencyTypeProvider type ?: ""
+            exchangeRateMapperFactory.create(rateConverter) {
+                _selectedCurrencyType.value?.currencyCode ?: ""
             }
 
     init {
@@ -77,12 +75,12 @@ class HomeViewModel @ViewModelInject constructor(
         observeSyncState()
     }
 
-    private fun observeSyncState(){
+    private fun observeSyncState() {
         cacheSyncManager.progress
                 .flowOn(Dispatchers.IO)
                 .onEach {
                     Timber.d("state $it")
-                     _isSyncRunning post (it != SyncState.Finished)
+                    _isSyncRunning post (it != SyncState.Finished)
                 }
                 .launchIn(viewModelScope)
     }
@@ -94,8 +92,14 @@ class HomeViewModel @ViewModelInject constructor(
                     Timber.d("getSelectedCurrencyType")
                     val type =
                             currencyLayerRepository.getCurrencyTypeByCurrencyCode(it).getDataOrError()
+                    val rate = exchangeRatesRepository.getCurrencyRateByCurrencyCode(it).getDataOrError()
+
+                    if (rate != null) {
+                        rateConverter.setUSDRate(rate.exchangeRate)
+                    }
                     if (type != null) {
                         _selectedCurrencyType post currencyTypeMapper.map(type)
+
                     } else {
                         _selectedCurrencyType post CurrencyTypeItemUiModel(0, "USD", "---")
                     }
@@ -128,7 +132,7 @@ class HomeViewModel @ViewModelInject constructor(
         preferenceRepository.getLastSyncDateFlow()
                 .flowOn(Dispatchers.IO)
                 .onSuccess {
-                    if(it == 0L ){
+                    if (it == 0L) {
                         _lastUpdateDate post "---"
                     }
                     _lastUpdateDate post dateFormatter.format(it)

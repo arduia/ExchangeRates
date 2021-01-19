@@ -256,7 +256,6 @@
         app:layout_constraintTop_toBottomOf="@id/imv_empty_wallet"
         />
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_exchange_rates"
         android:layout_width="0dp"
@@ -268,4 +267,5 @@
         app:layout_constraintTop_toBottomOf="@id/tv_rates_description"
         tools:listitem="@layout/item_exchange_rate"
         />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,10 +8,10 @@ import javax.inject.Inject
  * Created by Aung Ye Htet on 17/01/2021.
  */
 class ExchangeRateConverterImpl @Inject constructor(): ExchangeRateConverter {
+
     private val oneUnitAmount = Amount.fromFloat(1f)
     private var usdRate = oneUnitAmount
     private var enteredCurrencyValue = oneUnitAmount
-
 
     //Set USD Rate for Selected Currency
     override fun setUSDRate(value: Amount) {
@@ -39,5 +39,9 @@ class ExchangeRateConverterImpl @Inject constructor(): ExchangeRateConverter {
 
     override fun setEnterdValue(value: Amount) {
         this.enteredCurrencyValue = value
+    }
+
+    override fun getUnitRate(): Amount {
+        return usdRate
     }
 }

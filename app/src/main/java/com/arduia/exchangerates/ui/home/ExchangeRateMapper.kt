@@ -1,5 +1,6 @@
 package com.arduia.exchangerates.ui.home
 
+import com.arduia.exchangerates.data.CurrencyTypeDto
 import com.arduia.exchangerates.data.ExchangeRateDto
 import com.arduia.exchangerates.domain.Amount
 import com.arduia.exchangerates.domain.AmountFormat
@@ -57,7 +58,6 @@ class ExchangeRateAmountFormat @Inject constructor() : AmountFormat {
 }
 
 interface ExchangeRateMapperFactory {
-
     fun create(
         rateConverter: ExchangeRateConverter,
         selectedCurrencyType: Provider<String>

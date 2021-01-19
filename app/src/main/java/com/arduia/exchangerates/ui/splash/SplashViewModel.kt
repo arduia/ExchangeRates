@@ -4,6 +4,8 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arduia.exchangerates.data.*
+import com.arduia.exchangerates.domain.ErrorResult
+import com.arduia.exchangerates.domain.SuccessResult
 import com.arduia.exchangerates.domain.getDataOrError
 import com.arduia.exchangerates.ui.common.*
 import kotlinx.coroutines.Dispatchers
@@ -43,8 +45,8 @@ class SplashViewModel @ViewModelInject constructor(
         }
     }
 
-    companion object{
-        private const val SPLASH_INITIAL_SHOW_TIME = 500L
+    companion object {
+        private const val SPLASH_INITIAL_SHOW_TIME = 800L
     }
 
 }

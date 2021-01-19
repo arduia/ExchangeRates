@@ -18,4 +18,5 @@ interface CacheExchangeRateDao {
 
     @Query("SELECT * FROM `cache_exchange_rates`")
     suspend fun getAll(): List<CacheExchangeRateDto> // Testing Purpose
+
 }

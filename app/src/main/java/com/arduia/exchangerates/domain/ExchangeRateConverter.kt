@@ -12,4 +12,6 @@ interface ExchangeRateConverter {
     fun calculateOneUnit(rate: Amount): Amount
 
     fun setEnterdValue(value: Amount)
+
+    fun getUnitRate(): Amount
 }
