@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Exchange Rates</string>
     <string name="choose_currency_type">Choose currency type</string>
-    <string name="last_update">last update</string>
+    <string name="last_update">last updated</string>
     <string name="today">Today</string>
     <string name="enter_currency">Enter currency</string>
     <string name="prefix_exchange_rates_title">Exchange Rates for</string>

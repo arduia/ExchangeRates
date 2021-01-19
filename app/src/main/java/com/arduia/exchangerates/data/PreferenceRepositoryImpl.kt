@@ -18,7 +18,7 @@ class PreferenceRepositoryImpl @Inject constructor(
         return result { dao.setSelectedCurrencyType(value) }
     }
 
-    override fun getSelectedCurrencyTypeSync(): Result<String> {
+    override suspend fun getSelectedCurrencyTypeSync(): Result<String> {
         return result { dao.getSelectedCurrencyTypeSync() }
     }
 
@@ -30,7 +30,7 @@ class PreferenceRepositoryImpl @Inject constructor(
         return result { dao.setLastSyncDate(value) }
     }
 
-    override fun getLastSyncDateSync(): Result<Long> {
+    override suspend fun getLastSyncDateSync(): Result<Long> {
         return result { dao.getLastSyncDateSync() }
     }
 

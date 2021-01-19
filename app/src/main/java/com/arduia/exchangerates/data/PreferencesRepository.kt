@@ -11,13 +11,13 @@ interface PreferencesRepository {
 
     suspend fun setSelectedCurrencyType(value: String): Result<Boolean>
 
-    fun getSelectedCurrencyTypeSync(): Result<String>
+    suspend fun getSelectedCurrencyTypeSync(): Result<String>
 
     fun getSelectedCurrencyTypeFlow(): FlowResult<String>
 
     suspend fun setLastSyncDate(value: Long): Result<Boolean>
 
-    fun getLastSyncDateSync(): Result<Long>
+    suspend fun getLastSyncDateSync(): Result<Long>
 
     fun getLastSyncDateFlow(): FlowResult<Long>
 }

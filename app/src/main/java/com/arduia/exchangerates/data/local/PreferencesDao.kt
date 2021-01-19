@@ -10,14 +10,14 @@ interface PreferencesDao {
     suspend fun setSelectedCurrencyType(value: String): Boolean
 
     //Sync Postfix => Get Result Now Synchronously
-    fun getSelectedCurrencyTypeSync(): String
+    suspend fun getSelectedCurrencyTypeSync(): String
 
     //Flow Postfix => Get Result Asynchronously, may be later
     fun getSelectedCurrencyTypeFlow(): Flow<String>
 
     suspend fun setLastSyncDate(value: Long): Boolean
 
-    fun getLastSyncDateSync(): Long
+    suspend fun getLastSyncDateSync(): Long
 
     fun getLastSyncDateFlow(): Flow<Long>
 

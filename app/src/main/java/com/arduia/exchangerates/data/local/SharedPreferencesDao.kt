@@ -5,6 +5,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -31,15 +32,16 @@ class SharedPreferencesDao @Inject constructor(
         return currentValue == value
     }
 
-    override fun getSelectedCurrencyTypeSync(): String {
+    override suspend fun getSelectedCurrencyTypeSync(): String {
         return preference.getString(KEY_SELECTED_CURRENCY_TYPE, DEFAULT_SELECTED_CURRENCY_TYPE)
             ?: DEFAULT_SELECTED_CURRENCY_TYPE
     }
 
     override fun getSelectedCurrencyTypeFlow(): Flow<String> {
-        val currentValue = getSelectedCurrencyTypeSync()
-        //Update Listeners
-        selectedCurrencyTypeChannel.offer(currentValue)
+        runBlocking {
+            val currentValue = getSelectedCurrencyTypeSync()
+            selectedCurrencyTypeChannel.offer(currentValue)
+        }
         return selectedCurrencyTypeChannel.asFlow()
     }
 
@@ -52,13 +54,15 @@ class SharedPreferencesDao @Inject constructor(
         return currentValue == value
     }
 
-    override fun getLastSyncDateSync(): Long {
+    override suspend fun getLastSyncDateSync(): Long {
         return preference.getLong(KEY_LAST_SYNC_DATE, DEFAULT_LAST_SYNC_DATE)
     }
 
     override fun getLastSyncDateFlow(): Flow<Long> {
-        val currentValue = getLastSyncDateSync()
-        lastSyncDateChannel.offer(currentValue)
+        runBlocking {
+            val currentValue = getLastSyncDateSync()
+            lastSyncDateChannel.offer(currentValue)
+        }
         return lastSyncDateChannel.asFlow()
     }
 

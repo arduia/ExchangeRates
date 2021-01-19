@@ -8,10 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.arduia.exchangerates.data.CurrencyLayerRepository
-import com.arduia.exchangerates.data.CurrencyTypeDto
-import com.arduia.exchangerates.data.ExchangeRatesRepository
-import com.arduia.exchangerates.data.PreferencesRepository
+import com.arduia.exchangerates.data.*
 import com.arduia.exchangerates.domain.*
 import com.arduia.exchangerates.ui.common.*
 import com.arduia.exchangerates.ui.home.format.DateFormatter
@@ -30,14 +27,15 @@ import javax.inject.Provider
  * Cerated by Aung Ye Htet 16/01/2021 6:52 PM.
  */
 class HomeViewModel @ViewModelInject constructor(
-    exchangeRateMapperFactory: ExchangeRateMapperFactory,
-    private val exchangeRatesRepository: ExchangeRatesRepository,
-    private val currencyLayerRepository: CurrencyLayerRepository,
-    private val rateConverter: ExchangeRateConverter,
-    private val preferenceRepository: PreferencesRepository,
-    private val dateFormatter: DateFormatter,
-    private val currencyTypeMapper: Mapper<CurrencyTypeDto, CurrencyTypeItemUiModel>
-) : ViewModel() {
+        exchangeRateMapperFactory: ExchangeRateMapperFactory,
+        private val exchangeRatesRepository: ExchangeRatesRepository,
+        private val currencyLayerRepository: CurrencyLayerRepository,
+        private val rateConverter: ExchangeRateConverter,
+        private val preferenceRepository: PreferencesRepository,
+        private val dateFormatter: DateFormatter,
+        private val currencyTypeMapper: Mapper<CurrencyTypeDto, CurrencyTypeItemUiModel>,
+        private val cacheSyncManager: CacheSyncManager
+        ) : ViewModel() {
 
     private val _isSyncRunning = BaseLiveData<Boolean>()
     val isSyncRunning get() = _isSyncRunning.asLiveData()
@@ -68,32 +66,44 @@ class HomeViewModel @ViewModelInject constructor(
     }
 
     private val exchangeRateMapper =
-        exchangeRateMapperFactory.create(rateConverter) CurrencyTypeProvider@{
-            val type = selectedCurrencyType.value?.currencyCode
-            return@CurrencyTypeProvider type ?: ""
-        }
+            exchangeRateMapperFactory.create(rateConverter) CurrencyTypeProvider@{
+                val type = selectedCurrencyType.value?.currencyCode
+                return@CurrencyTypeProvider type ?: ""
+            }
 
     init {
         observeSelectedCurrencyCode()
+        observeLastUpdateDate()
+        observeSyncState()
+    }
+
+    private fun observeSyncState(){
+        cacheSyncManager.progress
+                .flowOn(Dispatchers.IO)
+                .onEach {
+                    Timber.d("state $it")
+                     _isSyncRunning post (it != SyncState.Finished)
+                }
+                .launchIn(viewModelScope)
     }
 
     private fun observeSelectedCurrencyCode() {
         preferenceRepository.getSelectedCurrencyTypeFlow()
-            .flowOn(Dispatchers.IO)
-            .onSuccess {
-                Timber.d("getSelectedCurrencyType")
-                val type =
-                    currencyLayerRepository.getCurrencyTypeByCurrencyCode(it).getDataOrError()
-                if (type != null) {
-                    _selectedCurrencyType post currencyTypeMapper.map(type)
-                } else {
+                .flowOn(Dispatchers.IO)
+                .onSuccess {
+                    Timber.d("getSelectedCurrencyType")
+                    val type =
+                            currencyLayerRepository.getCurrencyTypeByCurrencyCode(it).getDataOrError()
+                    if (type != null) {
+                        _selectedCurrencyType post currencyTypeMapper.map(type)
+                    } else {
+                        _selectedCurrencyType post CurrencyTypeItemUiModel(0, "USD", "---")
+                    }
+                }
+                .onError {
                     _selectedCurrencyType post CurrencyTypeItemUiModel(0, "USD", "---")
                 }
-            }
-            .onError {
-                _selectedCurrencyType post CurrencyTypeItemUiModel(0, "USD", "---")
-            }
-            .launchIn(viewModelScope)
+                .launchIn(viewModelScope)
     }
 
     fun onEnterCurrencyValue(value: String) {
@@ -106,43 +116,38 @@ class HomeViewModel @ViewModelInject constructor(
 
     private fun updateExchangeRateDescription(value: String) {
         val selectedCurrencyCode =
-            selectedCurrencyType.value?.currencyCode ?: "" //TODO Should be onChain
+                selectedCurrencyType.value?.currencyCode ?: "" //TODO Should be onChain
         _currentRatePostfix post "$value $selectedCurrencyCode"
     }
 
     fun startSync() {
-
+        cacheSyncManager.syncInBackground(viewModelScope, force = true)
     }
 
     private fun observeLastUpdateDate() {
         preferenceRepository.getLastSyncDateFlow()
-            .flowOn(Dispatchers.IO)
-            .onSuccess {
-                _lastUpdateDate post dateFormatter.format(it)
-            }
+                .flowOn(Dispatchers.IO)
+                .onSuccess {
+                    if(it == 0L ){
+                        _lastUpdateDate post "---"
+                    }
+                    _lastUpdateDate post dateFormatter.format(it)
+                }
+                .launchIn(viewModelScope)
     }
 
     private fun createExchangeRatePagedListLiveData(selectedCurrencyCode: String): LiveData<PagedList<ExchangeRateItemUiModel>> {
 
         val config = PagedList.Config.Builder()
-            .setEnablePlaceholders(true)
-            .setInitialLoadSizeHint(10)
-            .setPageSize(50)
-            .build()
+                .setEnablePlaceholders(true)
+                .setInitialLoadSizeHint(10)
+                .setPageSize(50)
+                .build()
 
         val dataSource = exchangeRatesRepository.getAllDataSource(selectedCurrencyCode)
-            .map(exchangeRateMapper::map)
+                .map(exchangeRateMapper::map)
 
         return LivePagedListBuilder(dataSource, config).build()
     }
-
-    private fun onEmptyData() {
-        _selectedCurrencyType post getEmptyCurrencyType()
-        _lastUpdateDate post "- - -"
-    }
-
-    private fun getEmptyCurrencyType() =
-        CurrencyTypeItemUiModel(0, "---", "---")
-
 
 }

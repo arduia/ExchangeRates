@@ -11,6 +11,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.arduia.exchangerates.R
 import com.arduia.exchangerates.databinding.FragHomeBinding
 import com.arduia.exchangerates.ui.common.BaseBindingFragment
@@ -103,10 +105,12 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
                 true -> {
                     binding.tvUpdateStatus.text = getString(R.string.updating)
                     startSyncRotate()
+                    binding.btnSync.isEnabled = false
                 }
                 false -> {
                     binding.tvUpdateStatus.text = getString(R.string.last_update)
                     stopSyncRotation()
+                    binding.btnSync.isEnabled = true
                 }
             }
         })
@@ -123,7 +127,16 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         })
 
         viewModel.exchangeRates.observe(viewLifecycleOwner) {
-            exchangeRateAdapter?.submitList(it)
+            exchangeRateAdapter?.submitList(it){
+
+                //Source: https://github.com/android/architecture-components-samples/
+                //Disable Auto Scroll-up
+                val layoutManager = (binding.rvExchangeRates.layoutManager as LinearLayoutManager)
+                val position = layoutManager.findFirstCompletelyVisibleItemPosition()
+                if (position != RecyclerView.NO_POSITION) {
+                    binding.rvExchangeRates.scrollToPosition(position)
+                }
+            }
         }
 
         viewModel.currentRatePostfix.observe(viewLifecycleOwner) {

@@ -11,9 +11,11 @@ interface CacheSyncManager {
 
     val progress: Flow<SyncState>
 
-    suspend fun syncNow(): Result<SyncState.Finished>
+    suspend fun syncNow(force: Boolean = false): Result<SyncState.Finished>
 
-    fun syncInBackground(coroutineScope: CoroutineScope)
+    fun syncInBackground(scope: CoroutineScope, force: Boolean = false)
+
+    fun setAutoRefresh(scope: CoroutineScope?)
 
 }
 
@@ -24,3 +26,4 @@ sealed class SyncState{
     object Initial: SyncState()
 }
 
+// Progress Flow: Finished -> Initial -> CurrenciesDownloading -> ExchangeRateDownloading -> Finished
