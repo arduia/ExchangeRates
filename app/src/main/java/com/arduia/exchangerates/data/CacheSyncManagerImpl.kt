@@ -38,6 +38,7 @@ class CacheSyncManagerImpl @Inject constructor(
     }
 
     override suspend fun syncNow(force: Boolean): Result<SyncState.Finished> {
+        Timber.d("syncNow $force")
         try {
             progressChannel.offer(SyncState.Initial)
             if (isOverMinimumRefreshInterval() || force){
@@ -53,6 +54,7 @@ class CacheSyncManagerImpl @Inject constructor(
     }
 
     private suspend fun startSyncProgress(): Result<SyncState.Finished> {
+
 
         progressChannel.offer(SyncState.CurrenciesDownloading)
         val nameResponse = currencyLayerRepository.getDownloadCurrencyNames().getDataOrError()
@@ -123,7 +125,7 @@ class CacheSyncManagerImpl @Inject constructor(
     }
 
     companion object {
-        private const val REFRESH_INTERVAL = 1860_000L //ms =  31min
+        private const val REFRESH_INTERVAL =  1860_000L //ms =  31min
     }
 }
 

@@ -22,13 +22,10 @@ import kotlinx.coroutines.launch
  * Cerated by Aung Ye Htet 16/01/2021 6:53 PM.
  */
 class ChooseCurrencyViewModel @ViewModelInject constructor(
-    private val currencyMapper: Mapper<CurrencyTypeDto, CurrencyTypeItemUiModel>,
-    private val currencyLayerRepository: CurrencyLayerRepository,
-    private val preferencesRepository: PreferencesRepository
+        private val currencyMapper: Mapper<CurrencyTypeDto, CurrencyTypeItemUiModel>,
+        private val currencyLayerRepository: CurrencyLayerRepository,
+        private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
-
-    private val _isCurrenciesDownloading = BaseLiveData<Boolean>()
-    val isCurrenciesDownloading get() = _isCurrenciesDownloading
 
     private val _onItemSelected = EventLiveData<Unit>()
     val onItemSelected get() = _onItemSelected.asLiveData()
@@ -62,12 +59,12 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
 
     private fun createLivePagedList(): LiveData<PagedList<CurrencyTypeItemUiModel>> {
         val config = PagedList.Config.Builder()
-            .setPageSize(50)
-            .setInitialLoadSizeHint(10)
-            .build()
+                .setPageSize(50)
+                .setInitialLoadSizeHint(10)
+                .build()
 
         val dataSource = currencyLayerRepository.getAllCurrencyTypeDataSource()
-            .map(currencyMapper::map)
+                .map(currencyMapper::map)
 
         return LivePagedListBuilder(dataSource, config).build()
     }

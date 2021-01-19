@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.arduia.exchangerates.R
+import com.arduia.exchangerates.databinding.ActivHostBinding
 import com.arduia.exchangerates.databinding.FragHomeBinding
 import com.arduia.exchangerates.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,7 +19,8 @@ class HostActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activ_host)
+        val binding = ActivHostBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         viewModel.hashCode()
     }
 

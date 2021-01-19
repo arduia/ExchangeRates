@@ -6,6 +6,7 @@ import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arduia.exchangerates.data.*
+import com.arduia.exchangerates.data.exception.CacheException
 import com.arduia.exchangerates.domain.*
 import com.arduia.exchangerates.ui.common.*
 import com.arduia.exchangerates.ui.home.format.DateFormatter
@@ -46,9 +47,6 @@ class HomeViewModel @ViewModelInject constructor(
     private val _enteredCurrencyValue = BaseLiveData<BigDecimal>()
     val enteredCurrencyValue get() = _enteredCurrencyValue.asLiveData()
 
-    private val _isRatesDownloading = BaseLiveData<Boolean>()
-    val isRatesDownloading get() = _isRatesDownloading.asLiveData()
-
     private val _onNoConnection = EventLiveData<Unit>()
     val onNoConnection get() = _onNoConnection.asLiveData()
 
@@ -73,6 +71,23 @@ class HomeViewModel @ViewModelInject constructor(
         observeSelectedCurrencyCode()
         observeLastUpdateDate()
         observeSyncState()
+        syncData()
+    }
+
+    private fun syncData() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            Timber.d("Sync")
+            val result = cacheSyncManager.syncNow()
+            if (result is ErrorResult) {
+                val exception = result.exception
+                if (exception is CacheException) {
+                    Timber.d("cache Exception")
+
+                }
+
+            }
+        }
     }
 
     private fun observeSyncState() {
@@ -101,14 +116,17 @@ class HomeViewModel @ViewModelInject constructor(
                         _selectedCurrencyType post currencyTypeMapper.map(type)
 
                     } else {
-                        _selectedCurrencyType post CurrencyTypeItemUiModel(0, "USD", "---")
+                        _selectedCurrencyType post createEmptyCurrencyUiModel()
                     }
                 }
                 .onError {
-                    _selectedCurrencyType post CurrencyTypeItemUiModel(0, "USD", "---")
+                    _selectedCurrencyType post createEmptyCurrencyUiModel()
                 }
                 .launchIn(viewModelScope)
     }
+
+    private fun createEmptyCurrencyUiModel() =
+            CurrencyTypeItemUiModel(0, EMPTY_VALUE_TEXT, EMPTY_VALUE_TEXT)
 
     fun onEnterCurrencyValue(value: String) {
         val currencyValue = if (value.isEmpty()) "1" else value
@@ -133,7 +151,8 @@ class HomeViewModel @ViewModelInject constructor(
                 .flowOn(Dispatchers.IO)
                 .onSuccess {
                     if (it == 0L) {
-                        _lastUpdateDate post "---"
+                        _lastUpdateDate post EMPTY_VALUE_TEXT
+                        return@onSuccess
                     }
                     _lastUpdateDate post dateFormatter.format(it)
                 }
@@ -154,4 +173,7 @@ class HomeViewModel @ViewModelInject constructor(
         return LivePagedListBuilder(dataSource, config).build()
     }
 
+    companion object {
+        private const val EMPTY_VALUE_TEXT = "---"
+    }
 }

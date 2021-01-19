@@ -20,13 +20,11 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
 
     private val viewModel by viewModels<ChooseCurrencyViewModel>()
 
-    private var currenciesDownloadingDialog: DownloadingCurrenciesDialog? = null
-
     private var currenciesAdapter: CurrenciesAdapter? = null
 
     override fun createBinding(
-        layoutInflater: LayoutInflater,
-        parent: ViewGroup?
+            layoutInflater: LayoutInflater,
+            parent: ViewGroup?
     ): FragChooseCurrencyBinding {
         return FragChooseCurrencyBinding.inflate(layoutInflater, parent, false)
     }
@@ -55,12 +53,6 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
     }
 
     private fun setupViewModel() {
-        viewModel.isCurrenciesDownloading.observe(viewLifecycleOwner, {
-            when (it) {
-                true -> showDownloadingCurrenciesDialog()
-                else -> hideDownloadingCurrenciesDialog()
-            }
-        })
 
         viewModel.isEmptyCurrencies.observe(viewLifecycleOwner, {
             when (it) {
@@ -75,9 +67,9 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
 
         viewModel.onItemSelectError.observe(viewLifecycleOwner) {
             Toast.makeText(
-                requireContext(),
-                getString(R.string.item_select_error),
-                Toast.LENGTH_SHORT
+                    requireContext(),
+                    getString(R.string.item_select_error),
+                    Toast.LENGTH_SHORT
             ).show()
         }
 
@@ -100,20 +92,9 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
         }
     }
 
-    private fun showDownloadingCurrenciesDialog() {
-        hideDownloadingCurrenciesDialog()
-        currenciesDownloadingDialog = DownloadingCurrenciesDialog(requireContext())
-        currenciesDownloadingDialog?.show()
-    }
-
-    private fun hideDownloadingCurrenciesDialog() {
-        currenciesDownloadingDialog?.dismiss()
-    }
-
     override fun onBeforeBindingDestroy() {
         super.onBeforeBindingDestroy()
         currenciesAdapter = null
-        hideDownloadingCurrenciesDialog()
     }
 
 }

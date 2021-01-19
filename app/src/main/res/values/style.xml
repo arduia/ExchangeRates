@@ -14,7 +14,7 @@
     <style name="TextAppearance.ExchangeRates.LogoMedium" parent="TextAppearance.MaterialComponents.Headline4">
         <item name="fontFamily">@font/telenor_bold_italic</item>
         <item name="android:fontFamily">@font/telenor_bold_italic</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold|italic</item>
         <item name="android:textColor">?colorSecondary</item>
     </style>

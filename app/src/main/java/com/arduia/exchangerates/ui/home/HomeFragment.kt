@@ -29,15 +29,14 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
 
     private val viewModel by viewModels<HomeViewModel>()
 
-    private var rateDownloadingDialog: Dialog? = null
     private var syncRotateAnimation: Animation? = null
     private var noConnectionDialog: NoInternetConnectionDialog? = null
 
     private var exchangeRateAdapter: ExchangeRatesAdapter? = null
 
     override fun createBinding(
-        layoutInflater: LayoutInflater,
-        parent: ViewGroup?
+            layoutInflater: LayoutInflater,
+            parent: ViewGroup?
     ): FragHomeBinding {
         return FragHomeBinding.inflate(layoutInflater, parent, false)
     }
@@ -84,8 +83,14 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
     private fun setupViewModel() {
         viewModel.isEmptyRates.observe(viewLifecycleOwner, {
             when (it) {
-                true -> showEmptyRates()
-                else -> hideEmptyRates()
+                true -> {
+                    showEmptyRates()
+                    disableEnterCurrency()
+                }
+                else -> {
+                    hideEmptyRates()
+                    enableEnterCurrency()
+                }
             }
         })
 
@@ -115,19 +120,12 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
             }
         })
 
-        viewModel.isRatesDownloading.observe(viewLifecycleOwner, {
-            when (it) {
-                true -> showDownloadingRatesDialog()
-                else -> hideDownloadingRatesDialog()
-            }
-        })
-
         viewModel.onNoConnection.observe(viewLifecycleOwner, EventObserver {
             showNoConnectionDialog()
         })
 
         viewModel.exchangeRates.observe(viewLifecycleOwner) {
-            exchangeRateAdapter?.submitList(it){
+            exchangeRateAdapter?.submitList(it) {
 
                 //Source: https://github.com/android/architecture-components-samples/
                 //Disable Auto Scroll-up
@@ -141,22 +139,24 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
 
         viewModel.currentRatePostfix.observe(viewLifecycleOwner) {
             val stringBuilder = StringBuilder()
-                .append(getString(R.string.prefix_exchange_rates_title))
-                .append(" ")
-                .append(it)
+                    .append(getString(R.string.prefix_exchange_rates_title))
+                    .append(" ")
+                    .append(it)
             binding.tvRatesDescription.text = stringBuilder.toString()
         }
     }
 
-    private fun showDownloadingRatesDialog() {
-        hideDownloadingRatesDialog()
-        rateDownloadingDialog = DownloadingRatesDialog(requireContext())
-        rateDownloadingDialog?.show()
+    private fun disableEnterCurrency() {
+        with(binding.edtCurrencyValue) {
+            setText("")
+            isEnabled = false
+        }
     }
 
-    private fun hideDownloadingRatesDialog() {
-        rateDownloadingDialog?.dismiss()
+    private fun enableEnterCurrency() {
+        binding.edtCurrencyValue.isEnabled = true
     }
+
 
     override fun onBeforeBindingDestroy() {
         super.onBeforeBindingDestroy()
@@ -166,8 +166,6 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         noConnectionDialog?.setOnExitClickListener(null)
         hideNoConnectionDialog()
         noConnectionDialog = null
-        hideDownloadingRatesDialog()
-        rateDownloadingDialog = null
         stopSyncRotation()
         syncRotateAnimation = null
     }
@@ -194,8 +192,8 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
     private fun startSyncRotate() {
         stopSyncRotation()
         syncRotateAnimation = RotateAnimation(
-            0f, 360f, Animation.RELATIVE_TO_SELF,
-            0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+                0f, 360f, Animation.RELATIVE_TO_SELF,
+                0.5f, Animation.RELATIVE_TO_SELF, 0.5f
         ).apply {
             duration = 800
             repeatCount = Animation.INFINITE
@@ -223,16 +221,16 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
     }
 
     private fun createChooseCurrencyNavOptions() =
-        navOptions {
-            anim {
-                //Home Fragment Animation
-                exit = R.anim.home_enter_right
-                popEnter = R.anim.home_exit_left
+            navOptions {
+                anim {
+                    //Home Fragment Animation
+                    exit = R.anim.home_enter_right
+                    popEnter = R.anim.home_exit_left
 
-                //Choose Currency Fragment Animation
-                popExit = R.anim.choose_currency_exit
-                enter = R.anim.choose_currency_enter
+                    //Choose Currency Fragment Animation
+                    popExit = R.anim.choose_currency_exit
+                    enter = R.anim.choose_currency_enter
+                }
             }
-        }
 
 }
