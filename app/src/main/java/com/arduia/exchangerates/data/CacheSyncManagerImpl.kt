@@ -62,6 +62,7 @@ class CacheSyncManagerImpl @Inject constructor(
 
         progressChannel.offer(SyncState.ExchangeRateDownloading)
         val rateResponse = currencyLayerRepository.getDownloadedUSDCurrencyRates().getDataOrThrow()
+
         if (rateResponse.success.not()) throw ServerErrorException(rateResponse.error!!.code, rateResponse.error.info)
 
         val rates = rateResponse.exchangeRate?.map {
