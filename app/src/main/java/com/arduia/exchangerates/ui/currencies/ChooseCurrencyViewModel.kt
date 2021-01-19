@@ -1,10 +1,7 @@
 package com.arduia.exchangerates.ui.currencies
 
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.arduia.exchangerates.data.CurrencyLayerRepository
@@ -16,6 +13,7 @@ import com.arduia.exchangerates.domain.getDataOrError
 import com.arduia.exchangerates.ui.common.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /**
@@ -23,9 +21,10 @@ import kotlinx.coroutines.launch
  */
 class ChooseCurrencyViewModel @ViewModelInject constructor(
         private val currencyMapper: Mapper<CurrencyTypeDto, CurrencyTypeItemUiModel>,
-        private val currencyLayerRepository: CurrencyLayerRepository,
-        private val preferencesRepository: PreferencesRepository
-) : ViewModel() {
+        private val currencyDataSourceFactory: CurrencyDataSourceFactory,
+        private val preferencesRepository: PreferencesRepository,
+
+        ) : ViewModel() {
 
     private val _onItemSelected = EventLiveData<Unit>()
     val onItemSelected get() = _onItemSelected.asLiveData()
@@ -35,10 +34,12 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
 
     val currencyTypeList = createLivePagedList()
 
-    val isEmptyCurrencies
-        get() = Transformations.switchMap(currencyTypeList) {
-            BaseLiveData(it.isEmpty())
-        }
+    private val queryText = BaseLiveData("")
+
+    val isEmptyCurrencies = queryText.asFlow()
+            .combine(currencyTypeList.asFlow()) { query, list ->
+                query.isEmpty() && list.isEmpty()
+            }.asLiveData()
 
     fun onSelect(type: CurrencyTypeItemUiModel) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -57,15 +58,18 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
         }
     }
 
+    fun onQuery(query: String) {
+        queryText post query
+        currencyDataSourceFactory.setQuery(query)
+        currencyTypeList.value?.dataSource?.invalidate()
+    }
+
     private fun createLivePagedList(): LiveData<PagedList<CurrencyTypeItemUiModel>> {
         val config = PagedList.Config.Builder()
                 .setPageSize(50)
                 .setInitialLoadSizeHint(10)
                 .build()
-
-        val dataSource = currencyLayerRepository.getAllCurrencyTypeDataSource()
-                .map(currencyMapper::map)
-
+        val dataSource = currencyDataSourceFactory.map(currencyMapper::map)
         return LivePagedListBuilder(dataSource, config).build()
     }
 

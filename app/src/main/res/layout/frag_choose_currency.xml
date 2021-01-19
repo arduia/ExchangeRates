@@ -77,6 +77,9 @@
             android:layout_marginRight="@dimen/margin_medium"
             android:background="@android:color/transparent"
             android:hint="@string/search"
+            android:id="@+id/edt_search"
+            android:singleLine="true"
+            android:maxLines="1"
             android:paddingVertical="@dimen/margin_small"
             android:textAppearance="?textAppearanceBody1"
             />

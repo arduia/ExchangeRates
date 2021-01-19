@@ -17,6 +17,10 @@ interface CurrencyTypeDao {
     @Query("SELECT * FROM `currency_types`")
     fun getAllDataSource(): DataSource.Factory<Int, CurrencyTypeDto>
 
+    @Query("SELECT * FROM `currency_types` WHERE currencyCode LIKE '%' || :query || '%' OR currencyName LIKE '%' || :query || '%'")
+    fun getFilteredAllDataSource(query: String):  DataSource.Factory<Int, CurrencyTypeDto>
+
+
     @Query("SELECT * FROM `currency_types` WHERE currencyCode =:code LIMIT 1")
     fun getByCurrencyCodeFlow(code: String): Flow<CurrencyTypeDto>
 

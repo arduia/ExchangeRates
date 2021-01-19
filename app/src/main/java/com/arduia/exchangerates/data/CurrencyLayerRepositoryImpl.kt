@@ -48,6 +48,10 @@ class CurrencyLayerRepositoryImpl @Inject constructor(
         return currencyTypeDao.getAllDataSource()
     }
 
+    override fun getFilteredAllDataSource(query: String):  DataSource.Factory<Int, CurrencyTypeDto> {
+        return currencyTypeDao.getFilteredAllDataSource(query)
+    }
+
     override fun getCurrencyTypeByCurrencyCodeFlow(code: String): FlowResult<CurrencyTypeDto> {
         return currencyTypeDao.getByCurrencyCodeFlow(code).asResultFlow()
     }
@@ -74,7 +78,8 @@ class CurrencyLayerRepositoryImpl @Inject constructor(
 
             if (call.isSuccessful.not()) return repoErrorResult(ServerErrorException(404, "not successful"))
 
-            val response = call.body() ?: return repoErrorResult(ServerErrorException(404, "body not found!"))
+            val response = call.body()
+                    ?: return repoErrorResult(ServerErrorException(404, "body not found!"))
 
             return SuccessResult(response)
         } catch (e: Throwable) {

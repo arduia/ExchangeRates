@@ -15,7 +15,6 @@ interface CurrencyLayerRepository {
     //CacheExchangeRate
     suspend fun insertAllCacheExchangeRate(item: List<CacheExchangeRateDto>): Result<Unit>
 
-
     suspend fun deleteAllCacheExchangeRate(): Result<Unit>
 
     suspend fun getAllCacheExchangeRate(): Result<List<CacheExchangeRateDto>>
@@ -24,6 +23,8 @@ interface CurrencyLayerRepository {
     suspend fun insertAllCurrencyType(items: List<CurrencyTypeDto>): Result<Unit>
 
     fun getAllCurrencyTypeDataSource(): DataSource.Factory<Int, CurrencyTypeDto>
+
+    fun getFilteredAllDataSource(query: String): DataSource.Factory<Int, CurrencyTypeDto>
 
     fun getCurrencyTypeByCurrencyCodeFlow(code: String): FlowResult<CurrencyTypeDto>
 

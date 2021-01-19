@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.arduia.exchangerates.R
@@ -46,6 +47,11 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
             it.isClickable = false //Avoid Multiple Clicking
             navigateBackToHome()
         }
+
+        binding.edtSearch.addTextChangedListener {
+            viewModel.onQuery(it.toString())
+        }
+
     }
 
     private fun navigateBackToHome() {
@@ -56,8 +62,14 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
 
         viewModel.isEmptyCurrencies.observe(viewLifecycleOwner, {
             when (it) {
-                true -> showEmptyCurrencies()
-                else -> hideEmptyCurrencies()
+                true -> {
+                    showEmptyCurrencies()
+                    binding.edtSearch.isEnabled = false
+                }
+                else -> {
+                    hideEmptyCurrencies()
+                    binding.edtSearch.isEnabled = true
+                }
             }
         })
 
