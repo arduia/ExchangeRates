@@ -19,4 +19,5 @@
     <string name="updating">Updating..</string>
     <string name="prefix_version">Version</string>
     <string name="item_select_error">Item Select Error</string>
+    <string name="server_error_description">Internal Server Error!</string>
 </resources>

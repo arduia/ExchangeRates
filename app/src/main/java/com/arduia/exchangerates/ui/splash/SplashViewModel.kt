@@ -33,10 +33,6 @@ class SplashViewModel @ViewModelInject constructor(
             delay(SPLASH_INITIAL_SHOW_TIME)
             _isLoading post true
             cacheSyncManager.syncNow()
-            val selectedType = preferencesRepository.getSelectedCurrencyTypeSync().getDataOrThrow()
-            if (selectedType.isEmpty()) {
-                preferencesRepository.setSelectedCurrencyType("USD")
-            }
             _isLoading post false
             _onSplashFinished post UnitEvent
         }

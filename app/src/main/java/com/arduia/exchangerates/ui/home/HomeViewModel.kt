@@ -7,6 +7,7 @@ import androidx.paging.PagedList
 import com.arduia.exchangerates.data.*
 import com.arduia.exchangerates.data.exception.NoConnectionException
 import com.arduia.exchangerates.data.exception.NoInternetException
+import com.arduia.exchangerates.data.exception.ServerErrorException
 import com.arduia.exchangerates.domain.*
 import com.arduia.exchangerates.ui.common.*
 import com.arduia.exchangerates.ui.home.format.DateFormatter
@@ -43,6 +44,12 @@ class HomeViewModel @ViewModelInject constructor(
     private val _onNoConnection = EventLiveData<Unit>()
     val onNoConnection get() = _onNoConnection.asLiveData()
 
+    private val _onServerError = EventLiveData<Unit>()
+    val onServerError get() = _onServerError.asLiveData()
+
+    private val _onToast = EventLiveData<String>()
+    val onToast get() = _onToast.asLiveData()
+
     val currentRatePostfix
         get() = _enteredCurrency.asFlow()
                 .combine(_selectedCurrencyType.asFlow()) { value, type ->
@@ -50,7 +57,7 @@ class HomeViewModel @ViewModelInject constructor(
                     "$amount ${type.currencyCode}"
                 }.asLiveData()
 
-    private val _enteredCurrency = BaseLiveData<String>()
+    private val _enteredCurrency = BaseLiveData(initValue = DEFAULT_ENTER_CURRENCY)
 
     val exchangeRates = Transformations.switchMap(selectedCurrencyType) {
         createExchangeRatePagedListLiveData(it.currencyCode)
@@ -61,6 +68,7 @@ class HomeViewModel @ViewModelInject constructor(
             BaseLiveData(it.isEmpty())
         }
 
+
     private val exchangeRateMapper =
             exchangeRateMapperFactory.create(rateConverter) {
                 _selectedCurrencyType.value?.currencyCode ?: ""
@@ -70,24 +78,9 @@ class HomeViewModel @ViewModelInject constructor(
         observeSelectedCurrencyCode()
         observeLastUpdateDate()
         observeSyncState()
-        syncData()
-        _enteredCurrency post DEFAULT_ENTER_CURRENCY
+        syncInBackground(force = false)
     }
 
-    private fun syncData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            Timber.d("sync now")
-            val result = cacheSyncManager.syncNow()
-            if (result is ErrorResult) {
-                _onNoConnection post UnitEvent
-                when (result.exception.cause) {
-                    is NoInternetException, is NoConnectionException -> {
-                        _onNoConnection post UnitEvent
-                    }
-                }
-            }
-        }
-    }
 
     private fun observeSyncState() {
         cacheSyncManager.progress
@@ -138,17 +131,23 @@ class HomeViewModel @ViewModelInject constructor(
         exchangeRates.value?.dataSource?.invalidate()
     }
 
-    fun startSync() {
-        cacheSyncManager.syncInBackground(viewModelScope, force = true) { result ->
+    private fun syncInBackground(force: Boolean) {
+        cacheSyncManager.syncInBackground(viewModelScope, force = force) { result ->
             if (result is ErrorResult) {
-                _onNoConnection post UnitEvent
-                when (result.exception.cause) {
+                when (result.exception) {
                     is NoInternetException, is NoConnectionException -> {
                         _onNoConnection post UnitEvent
+                    }
+                    is ServerErrorException -> {
+                        _onServerError post UnitEvent
                     }
                 }
             }
         }
+    }
+
+    fun startSync() {
+        syncInBackground(true)
     }
 
     private fun observeLastUpdateDate() {

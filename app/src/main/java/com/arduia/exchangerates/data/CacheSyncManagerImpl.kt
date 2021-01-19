@@ -76,7 +76,15 @@ class CacheSyncManagerImpl @Inject constructor(
         currencyLayerRepository.insertAllCurrencyType(names)
 
         val currentDate = Date().time
+        //Update Last SyncDate
         preferencesRepository.setLastSyncDate(currentDate)
+
+        //Set Default Currency Code
+        val selectedCurrency = preferencesRepository.getSelectedCurrencyTypeSync().getDataOrThrow()
+        if(selectedCurrency.isBlank() && rates.isNotEmpty()){
+            preferencesRepository.setSelectedCurrencyType(rates.first().currencyCode)
+        }
+
         updateAutoRefreshTimer(currentDate)
 
         progressChannel.offer(SyncState.Finished)
@@ -101,7 +109,8 @@ class CacheSyncManagerImpl @Inject constructor(
         this.autoSyncCoroutineScope = scope
         if (scope == null) return
         scope.launch(Dispatchers.IO) {
-            val time = preferencesRepository.getLastSyncDateSync().getDataOrThrow()
+            val lastSyncDate = preferencesRepository.getLastSyncDateSync().getDataOrThrow()
+            val time = if (lastSyncDate == 0L) Date().time else lastSyncDate //First-time should not use 0L
             updateAutoRefreshTimer(time)
         }
     }

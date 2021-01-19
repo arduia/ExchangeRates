@@ -1,23 +1,22 @@
 package com.arduia.exchangerates.ui.home
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
+import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navOptions
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.arduia.exchangerates.R
 import com.arduia.exchangerates.databinding.FragHomeBinding
 import com.arduia.exchangerates.ui.common.BaseBindingFragment
 import com.arduia.exchangerates.ui.common.EventObserver
 import com.arduia.exchangerates.ui.common.NoInternetConnectionDialog
+import com.arduia.exchangerates.ui.common.ServerErrorDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.StringBuilder
 
@@ -31,6 +30,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
 
     private var syncRotateAnimation: Animation? = null
     private var noConnectionDialog: NoInternetConnectionDialog? = null
+    private var serverErrorDialog: ServerErrorDialog? = null
 
     private var exchangeRateAdapter: ExchangeRatesAdapter? = null
 
@@ -125,16 +125,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         })
 
         viewModel.exchangeRates.observe(viewLifecycleOwner) {
-            exchangeRateAdapter?.submitList(it) {
-
-                //Source: https://github.com/android/architecture-components-samples/
-                //Disable Auto Scroll-up
-                val layoutManager = (binding.rvExchangeRates.layoutManager as LinearLayoutManager)
-                val position = layoutManager.findFirstCompletelyVisibleItemPosition()
-                if (position != RecyclerView.NO_POSITION) {
-                    binding.rvExchangeRates.scrollToPosition(position)
-                }
-            }
+            exchangeRateAdapter?.submitList(it)
         }
 
         viewModel.currentRatePostfix.observe(viewLifecycleOwner) {
@@ -144,6 +135,10 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
                     .append(it)
             binding.tvRatesDescription.text = stringBuilder.toString()
         }
+
+        viewModel.onServerError.observe(viewLifecycleOwner, EventObserver {
+            showServerErrorDialog()
+        })
     }
 
     private fun disableEnterCurrency() {
@@ -162,12 +157,30 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         super.onBeforeBindingDestroy()
         exchangeRateAdapter?.setOnItemClickListener(null)
         exchangeRateAdapter = null
-        noConnectionDialog?.setOnExitClickListener(null)
-        noConnectionDialog?.setOnExitClickListener(null)
         hideNoConnectionDialog()
+        noConnectionDialog?.dismiss()
+        serverErrorDialog?.dismiss()
         noConnectionDialog = null
+        serverErrorDialog = null
         stopSyncRotation()
         syncRotateAnimation = null
+    }
+
+    private fun showServerErrorDialog() {
+        hideServerErrorDialog()
+        serverErrorDialog = ServerErrorDialog(requireContext())
+        serverErrorDialog?.setOnExitClickListener {
+            exitFromHome()
+        }
+        serverErrorDialog?.setOnTryAgainClickListener {
+            hideServerErrorDialog()
+            viewModel.startSync()
+        }
+        serverErrorDialog?.show()
+    }
+
+    private fun hideServerErrorDialog() {
+        serverErrorDialog?.dismiss()
     }
 
     private fun showNoConnectionDialog() {
@@ -176,7 +189,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
             exitFromHome()
         }
         noConnectionDialog?.setOnTryAgainClickListener {
-            noConnectionDialog?.dismiss()
+            hideNoConnectionDialog()
             viewModel.startSync()
         }
         noConnectionDialog?.show()
