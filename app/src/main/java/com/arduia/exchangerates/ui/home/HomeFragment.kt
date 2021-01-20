@@ -15,7 +15,7 @@ import com.arduia.exchangerates.databinding.FragHomeBinding
 import com.arduia.exchangerates.ui.common.BaseBindingFragment
 import com.arduia.exchangerates.ui.common.EventObserver
 import com.arduia.exchangerates.ui.common.NoInternetConnectionDialog
-import com.arduia.exchangerates.ui.common.ServerErrorDialog
+import com.arduia.exchangerates.ui.common.InternalServerErrorDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.StringBuilder
 
@@ -29,7 +29,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
 
     private var syncRotateAnimation: Animation? = null
     private var noConnectionDialog: NoInternetConnectionDialog? = null
-    private var serverErrorDialog: ServerErrorDialog? = null
+    private var serverErrorDialog: InternalServerErrorDialog? = null
 
     private var exchangeRateAdapter: ExchangeRatesAdapter? = null
 
@@ -167,7 +167,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
 
     private fun showServerErrorDialog() {
         hideServerErrorDialog()
-        serverErrorDialog = ServerErrorDialog(requireContext())
+        serverErrorDialog = InternalServerErrorDialog(requireContext())
         serverErrorDialog?.setOnExitClickListener {
             exitFromHome()
         }

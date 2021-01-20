@@ -4,7 +4,8 @@ import android.content.Context
 import androidx.appcompat.app.AlertDialog
 import com.arduia.exchangerates.databinding.DialogServerErrorBinding
 
-class ServerErrorDialog(context: Context) : AlertDialog(context) {
+class InternalServerErrorDialog(context: Context) : AlertDialog(context) {
+
     private var _binding: DialogServerErrorBinding? = DialogServerErrorBinding.inflate(layoutInflater)
     private val binding get() = _binding!!
 
