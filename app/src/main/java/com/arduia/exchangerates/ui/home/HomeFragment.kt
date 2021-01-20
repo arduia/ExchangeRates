@@ -121,7 +121,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         })
 
         viewModel.onNoConnection.observe(viewLifecycleOwner, EventObserver {
-            showNoConnectionDialog()
+            showNoConnectionDialog(it)
         })
 
         viewModel.exchangeRates.observe(viewLifecycleOwner) {
@@ -183,8 +183,8 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         serverErrorDialog?.dismiss()
     }
 
-    private fun showNoConnectionDialog() {
-        noConnectionDialog = NoInternetConnectionDialog(requireContext())
+    private fun showNoConnectionDialog(force: Boolean) {
+        noConnectionDialog = NoInternetConnectionDialog(requireContext(), force)
         noConnectionDialog?.setOnExitClickListener {
             exitFromHome()
         }

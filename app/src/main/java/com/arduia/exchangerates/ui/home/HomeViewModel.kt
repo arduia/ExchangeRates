@@ -13,7 +13,6 @@ import com.arduia.exchangerates.ui.common.*
 import com.arduia.exchangerates.ui.home.format.DateFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
 
@@ -41,7 +40,7 @@ class HomeViewModel @ViewModelInject constructor(
     private val _selectedCurrencyType = BaseLiveData<CurrencyTypeItemUiModel>()
     val selectedCurrencyType get() = _selectedCurrencyType.asLiveData()
 
-    private val _onNoConnection = EventLiveData<Unit>()
+    private val _onNoConnection = EventLiveData<Boolean>()
     val onNoConnection get() = _onNoConnection.asLiveData()
 
     private val _onServerError = EventLiveData<Unit>()
@@ -136,7 +135,8 @@ class HomeViewModel @ViewModelInject constructor(
             if (result is ErrorResult) {
                 when (result.exception) {
                     is NoInternetException, is NoConnectionException -> {
-                        _onNoConnection post UnitEvent
+                        val shouldForceShow = exchangeRates.value?.isEmpty() ?: true
+                        _onNoConnection post event(shouldForceShow)
                     }
                     is ServerErrorException -> {
                         _onServerError post UnitEvent

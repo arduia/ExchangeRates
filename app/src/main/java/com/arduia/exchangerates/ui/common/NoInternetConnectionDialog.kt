@@ -2,12 +2,14 @@ package com.arduia.exchangerates.ui.common
 
 import android.content.Context
 import androidx.appcompat.app.AlertDialog
+import com.arduia.exchangerates.R
 import com.arduia.exchangerates.databinding.DialogNoInternetConnectionBinding
 
 /**
  * Created by Aung Ye Htet at 16/1/2021 9:35PM.
  */
-class NoInternetConnectionDialog(context: Context) : AlertDialog(context) {
+//@param force mean this dialog has cancelable or not.
+class NoInternetConnectionDialog(context: Context, private val force: Boolean = true) : AlertDialog(context) {
 
     private var _binding: DialogNoInternetConnectionBinding? =
             DialogNoInternetConnectionBinding.inflate(layoutInflater)
@@ -24,7 +26,13 @@ class NoInternetConnectionDialog(context: Context) : AlertDialog(context) {
 
     private fun setupView() {
         with(binding) {
-            btnExit.setOnClickListener { onExitClickListener?.invoke() }
+            if (force) {
+                btnExit.text = context.getString(R.string.exit)
+                btnExit.setOnClickListener { onExitClickListener?.invoke() }
+            } else {
+                btnExit.text = context.getString(R.string.cancel)
+                btnExit.setOnClickListener { dismiss() }
+            }
             btnTryAgain.setOnClickListener {
                 onTryAgainClickListener?.invoke()
             }
