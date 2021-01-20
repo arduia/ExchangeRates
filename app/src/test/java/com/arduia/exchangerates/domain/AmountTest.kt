@@ -32,7 +32,7 @@ class AmountTest {
     @Test(expected = AmountException::class)
     fun shouldInitFail() {
         val amount = Amount.fromString("abcdefg")
-        //ShouldFail
+        //Should throw AmountException
     }
 
     @Test
