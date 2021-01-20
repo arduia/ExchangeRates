@@ -165,6 +165,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
             navigateToChooseCurrency()
             it.isClickable = true
         }
+        binding.rvExchangeRates.itemAnimator = null
     }
 
     private fun clearEnteredCurrencyValue() {
