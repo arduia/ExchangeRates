@@ -15,9 +15,9 @@ import javax.inject.Provider
  * Created by Aung Ye Htet at 18/01/2021 5:54 PM.
  */
 class ExchangeRateMapper private constructor(
-    private val selectedCurrencyType: Provider<String>,
-    private val rateConverter: ExchangeRateConverter,
-    private val amountFormat: AmountFormat
+        private val selectedCurrencyType: Provider<String>,
+        private val rateConverter: ExchangeRateConverter,
+        private val amountFormat: AmountFormat
 ) : Mapper<ExchangeRateDto, ExchangeRateItemUiModel> {
 
     override fun map(input: ExchangeRateDto): ExchangeRateItemUiModel {
@@ -26,41 +26,45 @@ class ExchangeRateMapper private constructor(
         val unitRate = rateConverter.calculateOneUnit(input.exchangeRate).format(amountFormat)
 
         return ExchangeRateItemUiModel(
-            id = input.id,
-            currencyCode = input.currencyCode,
-            currencyName = input.currencyName,
-            exchangeBalance = "1${selectedCurrencyType.get()}=$unitRate${input.currencyCode}",
-            exchangeRate = rateAmount
+                id = input.id,
+                currencyCode = input.currencyCode,
+                currencyName = input.currencyName,
+                exchangeBalance = "1${selectedCurrencyType.get()}=$unitRate${input.currencyCode}",
+                exchangeRate = rateAmount
         )
     }
 
     class ExchangeRateMapperFactoryImpl @Inject constructor(
-        private val amountFormat: AmountFormat
+            private val amountFormat: AmountFormat
     ) : ExchangeRateMapperFactory {
         override fun create(
-            rateConverter: ExchangeRateConverter,
-            selectedCurrencyType: Provider<String>
+                rateConverter: ExchangeRateConverter,
+                selectedCurrencyType: Provider<String>
         ): Mapper<ExchangeRateDto, ExchangeRateItemUiModel> {
             return ExchangeRateMapper(
-                selectedCurrencyType,
-                rateConverter,
-                amountFormat
+                    selectedCurrencyType,
+                    rateConverter,
+                    amountFormat
             )
         }
     }
 }
 
 class ExchangeRateAmountFormat @Inject constructor() : AmountFormat {
+
     private val decimalFormat = DecimalFormat("#,###.##")
+
     override fun format(bigDecimal: BigDecimal): String {
         return decimalFormat.format(bigDecimal)
     }
+
 }
 
 interface ExchangeRateMapperFactory {
+
     fun create(
-        rateConverter: ExchangeRateConverter,
-        selectedCurrencyType: Provider<String>
+            rateConverter: ExchangeRateConverter,
+            selectedCurrencyType: Provider<String>
     ): Mapper<ExchangeRateDto, ExchangeRateItemUiModel>
 
 }

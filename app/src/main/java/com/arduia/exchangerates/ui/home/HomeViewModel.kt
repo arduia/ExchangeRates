@@ -13,7 +13,6 @@ import com.arduia.exchangerates.ui.common.*
 import com.arduia.exchangerates.ui.home.format.DateFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
 import java.util.*
 
 
@@ -25,7 +24,7 @@ class HomeViewModel @ViewModelInject constructor(
         private val exchangeRatesRepository: ExchangeRatesRepository,
         private val currencyLayerRepository: CurrencyLayerRepository,
         private val rateConverter: ExchangeRateConverter,
-        private val preferenceRepository: PreferencesRepository,
+        private val preferencesRepository: PreferencesRepository,
         private val dateFormatter: DateFormatter,
         private val currencyTypeMapper: Mapper<CurrencyTypeDto, CurrencyTypeItemUiModel>,
         private val cacheSyncManager: CacheSyncManager
@@ -34,8 +33,8 @@ class HomeViewModel @ViewModelInject constructor(
     private val _isSyncRunning = BaseLiveData<Boolean>()
     val isSyncRunning get() = _isSyncRunning.asLiveData()
 
-    private val _lastUpdateDate = BaseLiveData<String>()
-    val lastUpdateDate get() = _lastUpdateDate.asLiveData()
+    private val _lastUpdatedDate = BaseLiveData<String>()
+    val lastUpdatedDate get() = _lastUpdatedDate.asLiveData()
 
     private val _selectedCurrencyType = BaseLiveData<CurrencyTypeItemUiModel>()
     val selectedCurrencyType get() = _selectedCurrencyType.asLiveData()
@@ -46,68 +45,69 @@ class HomeViewModel @ViewModelInject constructor(
     private val _onServerError = EventLiveData<Unit>()
     val onServerError get() = _onServerError.asLiveData()
 
-    private val _onToast = EventLiveData<String>()
-    val onToast get() = _onToast.asLiveData()
+    val currentRatePostfix get() = createRatePostfixLiveData()
 
-    val currentRatePostfix
-        get() = _enteredCurrency.asFlow()
-                .combine(_selectedCurrencyType.asFlow()) { value, type ->
-                    val amount = Amount.fromString(value)
-                    "$amount ${type.currencyCode}"
-                }.asLiveData()
+    private val _enteredCurrency = BaseLiveData(initValue = DEFAULT_ENTER_CURRENCY) //For internal data flow,no for Fragment to observe
 
-    private val _enteredCurrency = BaseLiveData(initValue = DEFAULT_ENTER_CURRENCY)
-
-    val exchangeRates = Transformations.switchMap(selectedCurrencyType) {
+    val exchangeRates = selectedCurrencyType.switchMap {
         createExchangeRatePagedListLiveData(it.currencyCode)
     }
 
-    val isEmptyRates
-        get() = exchangeRates.switchMap {
-            BaseLiveData(it.isEmpty())
-        }
+    val isExchangeRatesEmpty = exchangeRates.switchMap {
+        BaseLiveData(it.isEmpty())
+    }
 
-
-    private val exchangeRateMapper =
-            exchangeRateMapperFactory.create(rateConverter) {
-                _selectedCurrencyType.value?.currencyCode ?: ""
-            }
+    private val exchangeRateMapper = exchangeRateMapperFactory.create(rateConverter) {
+        _selectedCurrencyType.value?.currencyCode ?: "" //Provide<String> selectedCurrencyType
+    }
 
     init {
         observeSelectedCurrencyCode()
         observeLastUpdateDate()
         observeSyncState()
-        syncInBackground(force = false)
+        syncInBackground(force = false) //Sync again for home to recover Splash sync failure
     }
 
+    fun startSync() {
+        syncInBackground(force = true)
+    }
+
+    fun onEnterCurrencyValue(value: String) {
+        val currencyValue = if (value.isEmpty()) DEFAULT_ENTER_CURRENCY else value
+        _enteredCurrency set currencyValue
+        updateExchangeRateConverter(currencyValue)
+    }
+
+    private fun updateExchangeRateConverter(value: String) {
+        val amount = Amount.fromString(value)
+        rateConverter.setEnterdValue(amount)
+        exchangeRates.value?.dataSource?.invalidate()
+    }
 
     private fun observeSyncState() {
         cacheSyncManager.progress
                 .flowOn(Dispatchers.IO)
                 .onEach {
-                    Timber.d("state $it")
-                    _isSyncRunning post (it != SyncState.Finished)
+                    _isSyncRunning post (it != SyncState.Finished) //for sync states => Initial, Downloading
                 }
                 .launchIn(viewModelScope)
     }
 
     private fun observeSelectedCurrencyCode() {
-        preferenceRepository.getSelectedCurrencyTypeFlow()
+        preferencesRepository.getSelectedCurrencyTypeFlow()
                 .flowOn(Dispatchers.IO)
                 .onSuccess {
-                    Timber.d("getSelectedCurrencyType")
                     val type =
                             currencyLayerRepository.getCurrencyTypeByCurrencyCode(it).getDataOrThrow()
                     val rate = exchangeRatesRepository.getCurrencyRateByCurrencyCode(it).getDataOrThrow()
 
                     if (rate != null) {
-                        rateConverter.setUSDRate(rate.exchangeRate)
+                        rateConverter.setUSDRate(rate.exchangeRate) //config for current currency type
                     }
-                    if (type != null) {
-                        _selectedCurrencyType post currencyTypeMapper.map(type)
 
-                    } else {
-                        _selectedCurrencyType post createEmptyCurrencyUiModel()
+                    when (type != null) {
+                        true -> _selectedCurrencyType post currencyTypeMapper.map(type)
+                        false -> _selectedCurrencyType post createEmptyCurrencyUiModel() //Empty Currency Type
                     }
                 }
                 .onError {
@@ -119,61 +119,54 @@ class HomeViewModel @ViewModelInject constructor(
     private fun createEmptyCurrencyUiModel() =
             CurrencyTypeItemUiModel(0, EMPTY_VALUE_TEXT, EMPTY_VALUE_TEXT)
 
-    fun onEnterCurrencyValue(value: String) {
-
-        val currencyValue = if (value.isEmpty()) DEFAULT_ENTER_CURRENCY else value
-
-        _enteredCurrency post currencyValue
-        val amount = Amount.fromString(currencyValue)
-        rateConverter.setEnterdValue(amount)
-
-        exchangeRates.value?.dataSource?.invalidate()
+    private fun syncInBackground(force: Boolean) { //force => should sync although date is not over minimum refresh interval
+        cacheSyncManager.syncInBackground(viewModelScope, force = force) { result ->
+            onSyncResult(result)
+        }
     }
 
-    private fun syncInBackground(force: Boolean) {
-        cacheSyncManager.syncInBackground(viewModelScope, force = force) { result ->
-            if (result is ErrorResult) {
-                when (result.exception) {
-                    is NoInternetException, is NoConnectionException -> {
-                        val shouldForceShow = exchangeRates.value?.isEmpty() ?: true
-                        _onNoConnection post event(shouldForceShow)
-                    }
-                    is ServerErrorException -> {
-                        _onServerError post UnitEvent
-                    }
+    private fun onSyncResult(result: Result<SyncState>) {
+        if (result is ErrorResult) {
+            when (result.exception) {
+                is NoInternetException, is NoConnectionException -> {
+                    val shouldForceShow = exchangeRates.value?.isEmpty() ?: true
+                    _onNoConnection post event(shouldForceShow)
+                }
+                is ServerErrorException -> {
+                    _onServerError post UnitEvent
                 }
             }
         }
     }
 
-    fun startSync() {
-        syncInBackground(true)
-    }
-
     private fun observeLastUpdateDate() {
-        preferenceRepository.getLastSyncDateFlow()
+        preferencesRepository.getLastSyncDateFlow()
                 .flowOn(Dispatchers.IO)
                 .onSuccess {
                     if (it == 0L) {
-                        _lastUpdateDate post EMPTY_VALUE_TEXT
+                        _lastUpdatedDate post EMPTY_VALUE_TEXT
                         return@onSuccess
                     }
-                    _lastUpdateDate post dateFormatter.format(it)
+                    _lastUpdatedDate post dateFormatter.format(it)
                 }
                 .launchIn(viewModelScope)
     }
 
-    private fun createExchangeRatePagedListLiveData(selectedCurrencyCode: String): LiveData<PagedList<ExchangeRateItemUiModel>> {
+    private fun createRatePostfixLiveData() = _enteredCurrency.asFlow()
+            .combine(_selectedCurrencyType.asFlow()) { value, type ->
+                val amount = Amount.fromString(value)
+                "$amount ${type.currencyCode}"
+            }.asLiveData()
 
+    private fun createExchangeRatePagedListLiveData(selectedCurrencyCode: String):
+            LiveData<PagedList<ExchangeRateItemUiModel>> {
         val config = PagedList.Config.Builder()
-                .setEnablePlaceholders(true)
-                .setInitialLoadSizeHint(10)
-                .setPageSize(50)
+                .setEnablePlaceholders(false)
+                .setInitialLoadSizeHint(40)
+                .setPageSize(20)
                 .build()
-
         val dataSource = exchangeRatesRepository.getAllDataSource(selectedCurrencyCode)
                 .map(exchangeRateMapper::map)
-
         return LivePagedListBuilder(dataSource, config).build()
     }
 

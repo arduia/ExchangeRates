@@ -36,9 +36,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
     override fun createBinding(
             layoutInflater: LayoutInflater,
             parent: ViewGroup?
-    ): FragHomeBinding {
-        return FragHomeBinding.inflate(layoutInflater, parent, false)
-    }
+    ) = FragHomeBinding.inflate(layoutInflater, parent, false)
 
     override fun onViewCreated(savedInstanceState: Bundle?) {
         super.onViewCreated(savedInstanceState)
@@ -47,40 +45,25 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
     }
 
     private fun setupView() {
-        exchangeRateAdapter = ExchangeRatesAdapter(layoutInflater)
-        binding.rvExchangeRates.adapter = exchangeRateAdapter
-        binding.rlChooseCurrency.setOnClickListener {
-            it.isClickable = false //To Avoid Multiple Click
-            navigateToChooseCurrency()
-            it.isClickable = true
-        }
-
-        binding.btnSync.setOnClickListener {
-            viewModel.startSync()
-        }
-
-        binding.btnBackspace.setOnClickListener {
-            clearEnteredCurrencyValue()
-        }
-
-        binding.edtCurrencyValue.filters = arrayOf(FloatingInputFilter())
-        binding.edtCurrencyValue.addTextChangedListener {
-            if (it == null) return@addTextChangedListener
-            viewModel.onEnterCurrencyValue(it.toString())
-        }
-    }
-
-    private fun clearEnteredCurrencyValue() {
-        binding.edtCurrencyValue.setText("")
-    }
-
-    private fun navigateToChooseCurrency() {
-        val navOptions = createChooseCurrencyNavOptions()
-        findNavController().navigate(R.id.dest_choose_currency, null, navOptions)
+        setupExchangeRateRecyclerView()
+        setupSyncButton()
+        setupBackspaceButton()
+        setupCurrencyValueEditText()
     }
 
     private fun setupViewModel() {
-        viewModel.isEmptyRates.observe(viewLifecycleOwner, {
+        observeIsExchangeRatesEmpty()
+        observeSelectedCurrencyType()
+        observeLastUpdatedDate()
+        observeIsSyncRunning()
+        observeOnNoConnectionEvent()
+        observeExchangeRates()
+        observeCurrentRatePostfix()
+        observerOnServerErrorEvent()
+    }
+
+    private fun observeIsExchangeRatesEmpty() {
+        viewModel.isExchangeRatesEmpty.observe(viewLifecycleOwner, {
             when (it) {
                 true -> {
                     showEmptyRates()
@@ -92,23 +75,29 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
                 }
             }
         })
+    }
 
+    private fun observeSelectedCurrencyType() {
         viewModel.selectedCurrencyType.observe(viewLifecycleOwner, {
             with(binding) {
                 tvSelectedCurrencyCode.text = it.currencyCode
                 tvSelectedCurrencyName.text = it.currencyName
             }
         })
+    }
 
-        viewModel.lastUpdateDate.observe(viewLifecycleOwner, {
+    private fun observeLastUpdatedDate() {
+        viewModel.lastUpdatedDate.observe(viewLifecycleOwner, {
             binding.tvLastUpdateDate.text = it
         })
+    }
 
+    private fun observeIsSyncRunning() {
         viewModel.isSyncRunning.observe(viewLifecycleOwner, {
             when (it) {
                 true -> {
                     binding.tvUpdateStatus.text = getString(R.string.updating)
-                    startSyncRotate()
+                    startSyncRotation()
                     binding.btnSync.isEnabled = false
                 }
                 false -> {
@@ -118,15 +107,21 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
                 }
             }
         })
+    }
 
+    private fun observeOnNoConnectionEvent() {
         viewModel.onNoConnection.observe(viewLifecycleOwner, EventObserver {
             showNoConnectionDialog(it)
         })
+    }
 
+    private fun observeExchangeRates() {
         viewModel.exchangeRates.observe(viewLifecycleOwner) {
             exchangeRateAdapter?.submitList(it)
         }
+    }
 
+    private fun observeCurrentRatePostfix() {
         viewModel.currentRatePostfix.observe(viewLifecycleOwner) {
             val stringBuilder = StringBuilder()
                     .append(getString(R.string.prefix_exchange_rates_title))
@@ -134,10 +129,51 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
                     .append(it)
             binding.tvRatesDescription.text = stringBuilder.toString()
         }
+    }
 
+    private fun observerOnServerErrorEvent() {
         viewModel.onServerError.observe(viewLifecycleOwner, EventObserver {
             showServerErrorDialog()
         })
+    }
+
+    private fun setupCurrencyValueEditText() {
+        binding.edtCurrencyValue.filters = arrayOf(FloatingInputFilter())
+        binding.edtCurrencyValue.addTextChangedListener {
+            if (it == null) return@addTextChangedListener
+            viewModel.onEnterCurrencyValue(it.toString())
+        }
+    }
+
+    private fun setupBackspaceButton() {
+        binding.btnBackspace.setOnClickListener {
+            clearEnteredCurrencyValue()
+        }
+    }
+
+    private fun setupSyncButton() {
+        binding.btnSync.setOnClickListener {
+            viewModel.startSync()
+        }
+    }
+
+    private fun setupExchangeRateRecyclerView() {
+        exchangeRateAdapter = ExchangeRatesAdapter(layoutInflater)
+        binding.rvExchangeRates.adapter = exchangeRateAdapter
+        binding.rlChooseCurrency.setOnClickListener {
+            it.isClickable = false //To Avoid Multiple Click
+            navigateToChooseCurrency()
+            it.isClickable = true
+        }
+    }
+
+    private fun clearEnteredCurrencyValue() {
+        binding.edtCurrencyValue.setText("")
+    }
+
+    private fun navigateToChooseCurrency() {
+        val navOptions = createChooseCurrencyNavOptions()
+        findNavController().navigate(R.id.dest_choose_currency, null, navOptions)
     }
 
     private fun disableEnterCurrency() {
@@ -151,25 +187,11 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         binding.edtCurrencyValue.isEnabled = true
     }
 
-
-    override fun onBeforeBindingDestroyed() {
-        super.onBeforeBindingDestroyed()
-        exchangeRateAdapter?.setOnItemClickListener(null)
-        exchangeRateAdapter = null
-        hideNoConnectionDialog()
-        noConnectionDialog?.dismiss()
-        serverErrorDialog?.dismiss()
-        noConnectionDialog = null
-        serverErrorDialog = null
-        stopSyncRotation()
-        syncRotateAnimation = null
-    }
-
     private fun showServerErrorDialog() {
-        hideServerErrorDialog()
+        hideServerErrorDialog() //Hide old one if exit
         serverErrorDialog = InternalServerErrorDialog(requireContext())
         serverErrorDialog?.setOnExitClickListener {
-            exitFromHome()
+            exitFromApp()
         }
         serverErrorDialog?.setOnTryAgainClickListener {
             hideServerErrorDialog()
@@ -183,9 +205,10 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
     }
 
     private fun showNoConnectionDialog(force: Boolean) {
+        hideNoConnectionDialog()
         noConnectionDialog = NoInternetConnectionDialog(requireContext(), force)
         noConnectionDialog?.setOnExitClickListener {
-            exitFromHome()
+            exitFromApp()
         }
         noConnectionDialog?.setOnTryAgainClickListener {
             hideNoConnectionDialog()
@@ -194,7 +217,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         noConnectionDialog?.show()
     }
 
-    private fun exitFromHome() {
+    private fun exitFromApp() {
         requireActivity().finish()
     }
 
@@ -202,7 +225,7 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
         noConnectionDialog?.dismiss()
     }
 
-    private fun startSyncRotate() {
+    private fun startSyncRotation() {
         stopSyncRotation()
         syncRotateAnimation = RotateAnimation(
                 0f, 360f, Animation.RELATIVE_TO_SELF,
@@ -239,11 +262,22 @@ class HomeFragment : BaseBindingFragment<FragHomeBinding>() {
                     //Home Fragment Animation
                     exit = R.anim.home_enter_right
                     popEnter = R.anim.home_exit_left
-
                     //Choose Currency Fragment Animation
                     popExit = R.anim.choose_currency_exit
                     enter = R.anim.choose_currency_enter
                 }
             }
 
+    override fun onBeforeBindingDestroyed() {
+        super.onBeforeBindingDestroyed()
+        exchangeRateAdapter?.setOnItemClickListener(null)
+        exchangeRateAdapter = null
+        hideNoConnectionDialog()
+        noConnectionDialog?.dismiss()
+        serverErrorDialog?.dismiss()
+        noConnectionDialog = null
+        serverErrorDialog = null
+        stopSyncRotation()
+        syncRotateAnimation = null
+    }
 }
