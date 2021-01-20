@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_100"
+    >
+
+    <View
+        android:id="@+id/view_top_bg"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/height_home_top_background"
+        android:background="?colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_logo"
+        style="@style/TextAppearance.ExchangeRates.LogoMedium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/app_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/btn_sync"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:layout_marginTop="@dimen/margin_small"
+        android:background="@drawable/bg_white_alpha50_layerlist"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_sync"
+        app:layout_constraintEnd_toEndOf="@id/cv_entry"
+        app:layout_constraintTop_toBottomOf="@id/tv_logo"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.ExchangeRates.Circular"
+        app:tint="?colorSecondary"
+        />
+
+    <TextView
+        android:id="@+id/tv_update_status"
+        style="?textAppearanceOverline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:text="@string/last_update"
+        app:layout_constraintBottom_toTopOf="@+id/tv_last_update_date"
+        app:layout_constraintEnd_toStartOf="@id/btn_sync"
+        app:layout_constraintTop_toBottomOf="@+id/btn_sync"
+        app:layout_constraintVertical_chainStyle="packed"
+        />
+
+    <TextView
+        android:id="@+id/tv_last_update_date"
+        style="?textAppearanceSubtitle1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Today 3:00 AM"
+        app:layout_constraintBottom_toTopOf="@+id/btn_sync"
+        app:layout_constraintEnd_toEndOf="@id/tv_update_status"
+        app:layout_constraintTop_toBottomOf="@+id/tv_update_status"
+        />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_entry"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_large"
+        android:layout_marginTop="@dimen/margin_small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_sync"
+        app:layout_constraintWidth_max="@dimen/width_maximum_inner_widget"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <TextView
+                android:id="@+id/tv_choose_currency_type"
+                style="?textAppearanceBody2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="@dimen/margin_large"
+                android:layout_marginLeft="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_large"
+                android:text="@string/choose_currency_type"
+                />
+
+            <RelativeLayout
+                android:id="@+id/rl_choose_currency"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_choose_currency_type"
+                android:layout_centerHorizontal="true"
+                android:layout_marginHorizontal="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_small"
+                android:background="@drawable/bg_gray50_layerlist"
+                >
+
+                <TextView
+                    android:id="@+id/tv_selected_currency_code"
+                    style="?textAppearanceHeadline6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginVertical="@dimen/margin_medium"
+                    android:layout_marginStart="@dimen/margin_medium"
+                    android:layout_marginLeft="@dimen/margin_medium"
+                    tools:text="MMK"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_selected_currency_name"
+                    style="?textAppearanceBody1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/margin_medium"
+                    android:layout_marginLeft="@dimen/margin_medium"
+                    android:layout_marginEnd="@dimen/margin_medium"
+                    android:layout_toStartOf="@id/imv_navigate_currencies"
+                    android:layout_toLeftOf="@id/imv_navigate_currencies"
+                    android:layout_toEndOf="@id/tv_selected_currency_code"
+                    android:layout_toRightOf="@id/tv_selected_currency_code"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    tools:text="Myanmar"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imv_navigate_currencies"
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/margin_medium"
+                    android:layout_marginRight="@dimen/margin_medium"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_navigate_next"
+                    />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_enter_currency"
+                style="?textAppearanceBody2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl_choose_currency"
+                android:layout_alignStart="@id/rl_choose_currency"
+                android:layout_alignLeft="@id/rl_choose_currency"
+                android:layout_marginTop="@dimen/margin_small"
+                android:text="@string/enter_currency"
+                />
+
+            <FrameLayout
+                android:id="@+id/fl_currency_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_enter_currency"
+                android:layout_centerHorizontal="true"
+                android:layout_marginHorizontal="@dimen/margin_large"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_large"
+                android:background="@drawable/bg_gray50_layerlist"
+                >
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edt_currency_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/margin_large"
+                    android:layout_marginRight="@dimen/margin_large"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/default_currency_hint"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1"
+                    android:paddingHorizontal="@dimen/margin_medium"
+                    android:paddingVertical="@dimen/margin_small"
+                    android:singleLine="true"
+                    android:textAppearance="?textAppearanceCurrencyMedium"
+                    android:textColor="?colorSecondary"
+                    />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_backspace"
+                    android:layout_width="@dimen/icon_size"
+                    android:layout_height="@dimen/icon_size"
+                    android:layout_gravity="end"
+                    android:layout_marginVertical="@dimen/margin_small"
+                    android:layout_marginEnd="@dimen/margin_medium"
+                    android:layout_marginRight="@dimen/margin_medium"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_backspace"
+                    />
+            </FrameLayout>
+
+
+        </RelativeLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tv_rates_description"
+        style="?textAppearanceSubtitle2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:alpha="0.6"
+        android:text="@string/prefix_exchange_rates_title"
+        app:layout_constraintStart_toStartOf="@id/cv_entry"
+        app:layout_constraintTop_toBottomOf="@id/cv_entry"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imv_empty_wallet"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="@dimen/margin_large"
+        android:src="@drawable/ic_empty_wallet"
+        android:tint="@color/gray_300"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_rates_description"
+        />
+
+    <TextView
+        android:id="@+id/tv_empty_exchange_rate"
+        style="?textAppearanceHeadline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/empty_exchange_rates"
+        android:textColor="@color/gray_300"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imv_empty_wallet"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_exchange_rates"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/cv_entry"
+        app:layout_constraintStart_toStartOf="@id/cv_entry"
+        app:layout_constraintTop_toBottomOf="@id/tv_rates_description"
+        tools:listitem="@layout/item_exchange_rate"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

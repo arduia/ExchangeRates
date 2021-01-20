@@ -5,6 +5,10 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+def apiProfile = rootProject.file("app/api.properties")
+def apiProperties = new Properties()
+apiProperties.load(new FileInputStream(apiProfile))
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.2"
@@ -13,8 +17,8 @@ android {
         applicationId "com.arduia.exchangerates"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.0-beta01"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
@@ -28,11 +32,16 @@ android {
         debug {
             minifyEnabled false
             shrinkResources false
+
+            buildConfigField("String", "BASE_URL", apiProperties['base_url'])
+            buildConfigField("String", "API_KEY", apiProperties['api_key'])
         }
         release {
             minifyEnabled true
             shrinkResources true
 
+            buildConfigField("String", "BASE_URL", apiProperties['base_url'])
+            buildConfigField("String", "API_KEY", apiProperties['api_key'])
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -74,6 +83,10 @@ dependencies {
     def timber_version = "4.7.1"
     def leak_canary_version = "2.5"
     def androidx_recycler_version = "1.1.0"
+    def androidx_hilt_version = "1.0.0-alpha01"
+    def androidx_core_test_version = "2.1.0"
+    def mockito_test_version = "3.6.0"
+    def chucker_version = "3.4.0"
 
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -85,6 +98,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-extensions:$androidx_lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$androidx_lifecycle_version"
 
     //Material Components
     implementation "com.google.android.material:material:$material_version"
@@ -109,6 +123,8 @@ dependencies {
 
     //Room
     implementation "androidx.room:room-ktx:$androidx_room_version"
+    kapt "androidx.room:room-compiler:$androidx_room_version"
+    testImplementation "androidx.room:room-testing:$androidx_room_version"
 
     //Gson
     implementation "com.google.code.gson:gson:$gson_version"
@@ -120,9 +136,12 @@ dependencies {
     //Dependency Injection
     implementation "com.google.dagger:hilt-android:$dagger_hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$dagger_hilt_version"
-
+    kapt "androidx.hilt:hilt-compiler:$androidx_hilt_version"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$androidx_hilt_version"
     //Testing
     testImplementation "junit:junit:$junit_version"
+    testImplementation "androidx.arch.core:core-testing:$androidx_core_test_version"
+    testImplementation "org.mockito:mockito-core:$mockito_test_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_test_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_test_core_version"
 
@@ -131,4 +150,8 @@ dependencies {
 
     //LeakCanary
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
+
+    //HttpLogging
+    debugImplementation "com.github.chuckerteam.chucker:library:$chucker_version"
+    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chucker_version"
 }
