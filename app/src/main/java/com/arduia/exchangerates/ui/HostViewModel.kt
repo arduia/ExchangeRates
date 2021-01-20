@@ -19,6 +19,6 @@ class HostViewModel @ViewModelInject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        syncManager.setAutoRefresh(null)  //Register Auto Sync
+        syncManager.setAutoRefresh(null)  //Unregister Auto Sync
     }
 }

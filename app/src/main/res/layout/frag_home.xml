@@ -34,7 +34,7 @@
         android:layout_width="@dimen/icon_size"
         android:layout_height="@dimen/icon_size"
         android:layout_marginTop="@dimen/margin_small"
-        android:background="@drawable/bg_white_alpha50_layerlist"
+        android:background="@drawable/bg_sync_button"
         android:scaleType="centerInside"
         android:src="@drawable/ic_sync"
         app:layout_constraintEnd_toEndOf="@id/cv_entry"
@@ -62,10 +62,10 @@
         style="?textAppearanceSubtitle1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Today 3:00 AM"
         app:layout_constraintBottom_toTopOf="@+id/btn_sync"
         app:layout_constraintEnd_toEndOf="@id/tv_update_status"
         app:layout_constraintTop_toBottomOf="@+id/tv_update_status"
+        tools:text="Today 3:00 AM"
         />
 
     <com.google.android.material.card.MaterialCardView
@@ -83,6 +83,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/margin_large"
             >
 
             <TextView
@@ -107,7 +108,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_small"
-                android:background="@drawable/bg_gray50_layerlist"
+                android:background="@drawable/bg_currency_type"
                 >
 
                 <TextView
@@ -177,8 +178,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_small"
-                android:layout_marginBottom="@dimen/margin_large"
-                android:background="@drawable/bg_gray50_layerlist"
+                android:background="@drawable/bg_currency_type"
                 >
 
                 <androidx.appcompat.widget.AppCompatEditText
@@ -207,7 +207,7 @@
                     android:layout_marginVertical="@dimen/margin_small"
                     android:layout_marginEnd="@dimen/margin_medium"
                     android:layout_marginRight="@dimen/margin_medium"
-                    android:background="?selectableItemBackgroundBorderless"
+                    android:background="@drawable/bg_sync_button"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_backspace"
                     />

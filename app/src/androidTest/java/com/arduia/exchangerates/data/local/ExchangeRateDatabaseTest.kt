@@ -96,6 +96,7 @@ class ExchangeRateDatabaseTest{
     @Test
     fun testCacheExchangeRateDao() = runBlocking{
 
+        cacheExchangeRateDao.deleteAll()
         //InsertAll
         val item = CacheExchangeRateDto(0, "USD", "2.56")
         cacheExchangeRateDao.insertAll(listOf(item))
@@ -128,34 +129,46 @@ class ExchangeRateDatabaseTest{
         val currencyItemOne = CurrencyTypeDto(0, "USD", "United State Dollar")
         val currencyTypeTwo = CurrencyTypeDto(0, "MMK", "Myanmar Kyat")
 
+        //Insert ALL Test
         currencyTypeDao.insertAll(listOf(currencyItemOne,currencyTypeTwo))
 
         val rateOne = CacheExchangeRateDto(0, "USD", "3.65")
         val rateTwo = CacheExchangeRateDto(0, "MMK", "77.4")
         cacheExchangeRateDao.insertAll(listOf(rateOne, rateTwo))
 
-        //Amount Test
-        val factory = exchangeRatesDao.getAllDataSource()
+        //getDataSource Test
+        val factory = exchangeRatesDao.getAllDataSource("USD")
         val exchangeRateList = (factory.create() as LimitOffsetDataSource).loadRange(0, 10)
 
-        assertEquals(2, exchangeRateList.size)
-        assertEquals(currencyItemOne.currencyCode, exchangeRateList.first().currencyCode)
-        assertEquals(currencyItemOne.currencyName, exchangeRateList.first().currencyName)
-        assertEquals(rateOne.exchangeRate.toFloat(), exchangeRateList.first().exchangeRate.toString().toFloat())
+        assertEquals(1, exchangeRateList.size) //USD not exist; should be 1
+        assertEquals("MMK", exchangeRateList.first().currencyCode)
+        assertEquals("Myanmar Kyat", exchangeRateList.first().currencyName)
+        assertEquals( "77.4".toFloat(), exchangeRateList.first().exchangeRate.toString().toFloat())
 
-        assertEquals(currencyTypeTwo.currencyCode, exchangeRateList[1].currencyCode)
-        assertEquals(currencyTypeTwo.currencyName, exchangeRateList[1].currencyName)
-        assertEquals(rateTwo.exchangeRate.toFloat(), exchangeRateList[1].exchangeRate.toString().toFloat())
-
+        //Test new Type: Insert Euro Type
         val currencyThree = CurrencyTypeDto(0,"EUR", "Euro")
         currencyTypeDao.insertAll(listOf(currencyThree))
         val list = (factory.create() as LimitOffsetDataSource).loadRange(0, 10)
-        assertNotEquals(3, list.size)
+        assertNotEquals(2, list.size) // Not Equal Test: Cause there is no Euro exchange rate yet.
 
+        //Test new Rate: Insert Euro Exchange Rate
         val rateThree = CacheExchangeRateDto(0, "EUR", "59.10")
         cacheExchangeRateDao.insertAll(listOf(rateThree))
         val listThree = (factory.create() as LimitOffsetDataSource).loadRange(0, 10)
-        assertEquals(3, listThree.size)
+        assertEquals(2, listThree.size) //Equal Test: Cause just inserted Euro exchange rate.
+        assertEquals("EUR", listThree[0].currencyCode)
+        assertEquals("Euro", listThree[0].currencyName)
+        assertEquals( "59.1".toFloat(), listThree[0].exchangeRate.toString().toFloat())
+
+        //Test getCurrencyRateByCurrencyCode
+        val item = exchangeRatesDao.getCurrencyRateByCurrencyCode("EUR")
+        assertEquals("EUR", item?.currencyCode)
+        assertEquals("Euro", item?.currencyName)
+        assertEquals("59.1".toFloat(), item?.exchangeRate?.toString()?.toFloat())
+
+        //Test null return for Non-exit currency code
+        val nullItem = exchangeRatesDao.getCurrencyRateByCurrencyCode("NON_EXIT_CODE")
+        assertNull(nullItem)
     }
 
 }

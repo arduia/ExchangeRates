@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><!--HTTP error cause in Android version 8 and higher.
+If base url is secure(eg. https) , this file will not be necessary-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">apilayer.net</domain>
+    </domain-config>
+</network-security-config>
