@@ -5,6 +5,9 @@ import com.arduia.exchangerates.data.CurrencyLayerRepository
 import com.arduia.exchangerates.data.CurrencyTypeDto
 import javax.inject.Inject
 
+/**
+ * Created by Aung Ye Htet at 20/01/2021.
+ */
 class CurrencyDataSourceFactory @Inject constructor(
         private val currencyLayerRepository: CurrencyLayerRepository
 ) : DataSource.Factory<Int, CurrencyTypeDto>() {

@@ -52,7 +52,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fl_toolbar"
-
         app:layout_constraintWidth_max="@dimen/width_maximum_inner_widget"
         >
 
@@ -68,6 +67,7 @@
             />
 
         <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edt_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -77,10 +77,9 @@
             android:layout_marginRight="@dimen/margin_medium"
             android:background="@android:color/transparent"
             android:hint="@string/search"
-            android:id="@+id/edt_search"
-            android:singleLine="true"
             android:maxLines="1"
             android:paddingVertical="@dimen/margin_small"
+            android:singleLine="true"
             android:textAppearance="?textAppearanceBody1"
             />
     </androidx.appcompat.widget.LinearLayoutCompat>

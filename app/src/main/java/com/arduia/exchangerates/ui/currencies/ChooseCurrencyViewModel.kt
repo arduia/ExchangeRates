@@ -19,44 +19,48 @@ import kotlinx.coroutines.launch
 class ChooseCurrencyViewModel @ViewModelInject constructor(
         private val currencyMapper: Mapper<CurrencyTypeDto, CurrencyTypeItemUiModel>,
         private val currencyDataSourceFactory: CurrencyDataSourceFactory,
-        private val preferencesRepository: PreferencesRepository,
+        private val preferencesRepository: PreferencesRepository
+) : ViewModel() {
 
-        ) : ViewModel() {
+    private val _onCurrencySelected = EventLiveData<Unit>()
+    val onCurrencySelected get() = _onCurrencySelected.asLiveData()
 
-    private val _onItemSelected = EventLiveData<Unit>()
-    val onItemSelected get() = _onItemSelected.asLiveData()
+    private val _onCurrencySelectError = EventLiveData<Unit>()
+    val onCurrencySelectError get() = _onCurrencySelectError.asLiveData()
 
-    private val _onItemSelectError = EventLiveData<Unit>()
-    val onItemSelectError get() = _onItemSelectError.asLiveData()
-
-    val currencyTypeList = createLivePagedList()
+    val currencyTypeList get() = createLivePagedList()
 
     private val queryText = BaseLiveData("")
 
     val isEmptyCurrencies = queryText.asFlow()
             .combine(currencyTypeList.asFlow()) { query, list ->
-                query.isEmpty() && list.isEmpty()
+                query.isEmpty() && list.isEmpty() //Query and CurrencyList is Empty => Empty Currencies
             }.asLiveData()
 
-    fun onSelect(type: CurrencyTypeItemUiModel) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val successResult = preferencesRepository.setSelectedCurrencyType(type.currencyCode)
+    fun onCurrencySelected(type: CurrencyTypeItemUiModel) {
+        saveCurrencyCode(type.currencyCode)
+    }
 
-            if (successResult !is SuccessResult) {
+    private fun saveCurrencyCode(code: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = preferencesRepository.setSelectedCurrencyType(code)
+            if (result !is SuccessResult) { //on Error Result
+                _onCurrencySelectError post UnitEvent
                 return@launch
             }
-
-            if (successResult.data) {
-                _onItemSelected post UnitEvent
-            } else {
-                _onItemSelectError post UnitEvent
+            when (result.data) {
+                true -> _onCurrencySelected post UnitEvent //Successful
+                false -> _onCurrencySelectError post UnitEvent //Failure
             }
-
         }
     }
 
     fun onQuery(query: String) {
-        queryText post query
+        queryText set query
+        updateDataSource(query)
+    }
+
+    private fun updateDataSource(query: String) {
         currencyDataSourceFactory.setQuery(query)
         currencyTypeList.value?.dataSource?.invalidate()
     }
@@ -69,6 +73,5 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
         val dataSource = currencyDataSourceFactory.map(currencyMapper::map)
         return LivePagedListBuilder(dataSource, config).build()
     }
-
 
 }

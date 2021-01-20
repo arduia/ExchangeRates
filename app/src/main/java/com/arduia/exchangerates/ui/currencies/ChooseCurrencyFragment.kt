@@ -26,9 +26,7 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
     override fun createBinding(
             layoutInflater: LayoutInflater,
             parent: ViewGroup?
-    ): FragChooseCurrencyBinding {
-        return FragChooseCurrencyBinding.inflate(layoutInflater, parent, false)
-    }
+    ) = FragChooseCurrencyBinding.inflate(layoutInflater, parent, false)
 
     override fun onViewCreated(savedInstanceState: Bundle?) {
         super.onViewCreated(savedInstanceState)
@@ -37,57 +35,84 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
     }
 
     private fun setupView() {
-
-        currenciesAdapter = CurrenciesAdapter(layoutInflater)
-        binding.rvCurrencies.adapter = currenciesAdapter
-
-        currenciesAdapter?.setOnItemClickListener(viewModel::onSelect)
-
-        binding.btnNavigateBack.setOnClickListener {
-            it.isClickable = false //Avoid Multiple Clicking
-            navigateBackToHome()
-        }
-
-        binding.edtSearch.addTextChangedListener {
-            viewModel.onQuery(it.toString())
-        }
-
-    }
-
-    private fun navigateBackToHome() {
-        findNavController().popBackStack()
+        setupCurrencyListRecyclerView()
+        setupNavigateBackButton()
+        setupSearchEditText()
     }
 
     private fun setupViewModel() {
+        observeIsEmptyCurrencies()
+        observeCurrencyTypeList()
+        observeOnCurrencySelectErrorEvent()
+        observeOnCurrencySelectedEvent()
+    }
 
-        viewModel.isEmptyCurrencies.observe(viewLifecycleOwner, {
-            when (it) {
+    private fun observeIsEmptyCurrencies() {
+        viewModel.isEmptyCurrencies.observe(viewLifecycleOwner, { isEmpty ->
+            when (isEmpty) {
                 true -> {
                     showEmptyCurrencies()
-                    binding.edtSearch.isEnabled = false
+                    disableSearchView()
                 }
                 else -> {
                     hideEmptyCurrencies()
-                    binding.edtSearch.isEnabled = true
+                    enableSearchView()
                 }
             }
         })
+    }
 
+    private fun observeCurrencyTypeList() {
         viewModel.currencyTypeList.observe(viewLifecycleOwner) {
             currenciesAdapter?.submitList(it)
         }
+    }
 
-        viewModel.onItemSelectError.observe(viewLifecycleOwner) {
+    private fun observeOnCurrencySelectErrorEvent() {
+        viewModel.onCurrencySelectError.observe(viewLifecycleOwner) {
             Toast.makeText(
                     requireContext(),
                     getString(R.string.item_select_error),
                     Toast.LENGTH_SHORT
             ).show()
         }
+    }
 
-        viewModel.onItemSelected.observe(viewLifecycleOwner) {
+    private fun observeOnCurrencySelectedEvent() {
+        viewModel.onCurrencySelected.observe(viewLifecycleOwner) {
             navigateBackToHome()
         }
+    }
+
+    private fun setupNavigateBackButton() {
+        binding.btnNavigateBack.setOnClickListener {
+            it.isClickable = false //Avoid Multiple Clicking
+            navigateBackToHome()
+        }
+    }
+
+    private fun setupSearchEditText() {
+        binding.edtSearch.addTextChangedListener {
+            viewModel.onQuery(it.toString())
+        }
+    }
+
+    private fun setupCurrencyListRecyclerView() {
+        currenciesAdapter = CurrenciesAdapter(layoutInflater)
+        binding.rvCurrencies.adapter = currenciesAdapter
+        currenciesAdapter?.setOnItemClickListener(viewModel::onCurrencySelected)
+    }
+
+    private fun navigateBackToHome() {
+        findNavController().popBackStack()
+    }
+
+    private fun disableSearchView() {
+        binding.edtSearch.isEnabled = false
+    }
+
+    private fun enableSearchView() {
+        binding.edtSearch.isEnabled = true
     }
 
     private fun showEmptyCurrencies() {
@@ -105,7 +130,8 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
     }
 
     override fun onBeforeBindingDestroy() {
-        super.onBeforeBindingDestroy()
+        binding.rvCurrencies.adapter = null
+        currenciesAdapter?.setOnItemClickListener(null)
         currenciesAdapter = null
     }
 

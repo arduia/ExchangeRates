@@ -37,13 +37,16 @@ class CurrenciesAdapter(private val layoutInflater: LayoutInflater) :
     }
 
     inner class VH(val binding: ItemCurrencyTypeBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+
         init {
             binding.rlCurrencies.setOnClickListener(this)
         }
+
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position == -1) return //When viewHolder is not ready.
-            val item = getItem(position) ?: throw Exception("getItem at position($position) not found!")
+            val item = getItem(position)
+                    ?: throw Exception("getItem at position($position) not found!")
             onItemClickListener?.invoke(item)
         }
     }
