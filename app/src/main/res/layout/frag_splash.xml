@@ -26,10 +26,10 @@
         android:layout_width="@dimen/icon_size"
         android:layout_height="@dimen/icon_size"
         android:layout_marginBottom="@dimen/margin_medium"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/tv_version"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="invisible"
         />
 
     <TextView

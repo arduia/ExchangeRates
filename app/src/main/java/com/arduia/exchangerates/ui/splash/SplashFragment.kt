@@ -33,7 +33,6 @@ class SplashFragment : BaseBindingFragment<FragSplashBinding>() {
     }
 
     private fun setupView() {
-
         binding.tvVersion.text = StringBuilder().append(getString(R.string.prefix_version))
                 .append(" ")
                 .append(requireContext().getApplicationVersionName())
@@ -51,7 +50,6 @@ class SplashFragment : BaseBindingFragment<FragSplashBinding>() {
         viewModel.onSplashFinished.observe(viewLifecycleOwner, EventObserver {
             navigateToHome()
         })
-
     }
 
     private fun navigateToHome() {
@@ -60,7 +58,6 @@ class SplashFragment : BaseBindingFragment<FragSplashBinding>() {
             navigate(R.id.dest_home)
         }
     }
-
 
     private fun showLoadingProgress() {
         binding.pbLoading.visibility = View.VISIBLE
