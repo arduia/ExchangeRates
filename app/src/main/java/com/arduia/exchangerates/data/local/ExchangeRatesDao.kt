@@ -13,9 +13,9 @@ import com.arduia.exchangerates.data.ExchangeRateDto
 @Dao
 interface ExchangeRatesDao {
 
-    @Query("SELECT cache_exchange_rates.id,cache_exchange_rates.currencyCode, cache_exchange_rates.exchangeRate, currency_types.currencyName FROM `cache_exchange_rates` INNER JOIN `currency_types` ON cache_exchange_rates.currencyCode=currency_types.currencyCode WHERE cache_exchange_rates.currencyCode!=:selectedCurrencyCode ORDER BY cache_exchange_rates.currencyCode ASC")
+    @Query("SELECT cache_exchange_rates.id,cache_exchange_rates.currency_code, cache_exchange_rates.exchange_rate, currency_types.currency_name FROM `cache_exchange_rates` INNER JOIN `currency_types` ON cache_exchange_rates.currency_code=currency_types.currency_code WHERE cache_exchange_rates.currency_code!=:selectedCurrencyCode ORDER BY cache_exchange_rates.currency_code ASC")
     fun getAllDataSource(selectedCurrencyCode: String): DataSource.Factory<Int, ExchangeRateDto>
 
-    @Query("SELECT cache_exchange_rates.id,cache_exchange_rates.currencyCode, cache_exchange_rates.exchangeRate, currency_types.currencyName FROM `cache_exchange_rates` INNER JOIN `currency_types` ON cache_exchange_rates.currencyCode=currency_types.currencyCode WHERE cache_exchange_rates.currencyCode==:code LIMIT 1")
+    @Query("SELECT cache_exchange_rates.id,cache_exchange_rates.currency_code, cache_exchange_rates.exchange_rate, currency_types.currency_name FROM `cache_exchange_rates` INNER JOIN `currency_types` ON cache_exchange_rates.currency_code=currency_types.currency_code WHERE cache_exchange_rates.currency_code==:code LIMIT 1")
     suspend fun getCurrencyRateByCurrencyCode(code: String): ExchangeRateDto?
 }

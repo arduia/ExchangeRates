@@ -1,5 +1,6 @@
 package com.arduia.exchangerates.data
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -8,17 +9,17 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by Aung Ye Htet at 17/01/2021 1:30PM.
  */
-@Entity(tableName = CacheExchangeRateDto.TABLE_NAME, indices = [Index("currencyCode",unique=true)])
+@Entity(tableName = CacheExchangeRateDto.TABLE_NAME, indices = [Index("currency_code",unique=true)])
 data class CacheExchangeRateDto(
 
     @PrimaryKey(autoGenerate = true)
-    @SerializedName("id")
+    @ColumnInfo(name = "id")
     val id: Int,
 
-    @SerializedName("currency_code")
+    @ColumnInfo(name = "currency_code")
     val currencyCode: String,
 
-    @SerializedName("exchange_rate")
+    @ColumnInfo(name = "exchange_rate")
     val exchangeRate: String
 ) {
 

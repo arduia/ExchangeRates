@@ -9,7 +9,7 @@ import com.arduia.exchangerates.data.CurrencyTypeDto
 
 @Database(
         entities = [CacheExchangeRateDto::class, CurrencyTypeDto::class],
-        version = 6, exportSchema = true
+        version = 1, exportSchema = true
 )
 @TypeConverters(AmountTypeConverter::class)
 abstract class ExchangeRateDatabase : RoomDatabase() {

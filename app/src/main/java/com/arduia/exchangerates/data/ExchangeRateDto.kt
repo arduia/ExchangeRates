@@ -1,5 +1,6 @@
 package com.arduia.exchangerates.data
 
+import androidx.room.ColumnInfo
 import com.arduia.exchangerates.domain.Amount
 import com.google.gson.annotations.SerializedName
 
@@ -8,15 +9,15 @@ import com.google.gson.annotations.SerializedName
  */
 data class ExchangeRateDto(
 
-    @SerializedName("id")
+    @ColumnInfo(name = "id")
     val id: Int,
 
-    @SerializedName("currency_code")
+    @ColumnInfo(name = "currency_code")
     val currencyCode: String,
 
-    @SerializedName("exchange_rate")
+    @ColumnInfo(name = "exchange_rate")
     val exchangeRate: Amount,
 
-    @SerializedName("currency_name")
+    @ColumnInfo(name = "currency_name")
     val currencyName: String
 )
