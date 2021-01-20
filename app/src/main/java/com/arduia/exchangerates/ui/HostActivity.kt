@@ -10,7 +10,7 @@ import com.arduia.exchangerates.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
- *  Created by Aung Ye Htet at 15/01/2021 11:32 PM
+ *  Created by Aung Ye Htet at 15/01/2021 11:32 PM.
  */
 @AndroidEntryPoint
 class HostActivity : AppCompatActivity() {
@@ -21,7 +21,7 @@ class HostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivHostBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel.hashCode()
+        viewModel.toString() // Just to activate viewModel
     }
 
 }
