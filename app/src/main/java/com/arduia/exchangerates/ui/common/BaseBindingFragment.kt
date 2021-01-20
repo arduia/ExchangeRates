@@ -16,7 +16,7 @@ abstract class BaseBindingFragment<V : ViewBinding> : Fragment() {
     protected val binding: V
         get() = _binding ?: throw Exception("ViewBinding is not initialized yet!")
 
-    final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = createBinding(inflater, container)
         return binding.root
     }
@@ -30,15 +30,15 @@ abstract class BaseBindingFragment<V : ViewBinding> : Fragment() {
 
     open fun onViewCreated(savedInstanceState: Bundle?) {}
 
-    open fun onBeforeBindingDestroy() {}
+    open fun onBeforeBindingDestroyed() {}
 
-    open fun onAfterBindingDestroy() {}
+    open fun onAfterBindingDestroyed() {}
 
     final override fun onDestroyView() {
         super.onDestroyView()
-        onBeforeBindingDestroy()
+        onBeforeBindingDestroyed()
         _binding = null
-        onAfterBindingDestroy()
+        onAfterBindingDestroyed()
     }
 
 }

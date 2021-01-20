@@ -129,7 +129,7 @@ class ChooseCurrencyFragment : BaseBindingFragment<FragChooseCurrencyBinding>() 
         }
     }
 
-    override fun onBeforeBindingDestroy() {
+    override fun onBeforeBindingDestroyed() {
         binding.rvCurrencies.adapter = null
         currenciesAdapter?.setOnItemClickListener(null)
         currenciesAdapter = null
