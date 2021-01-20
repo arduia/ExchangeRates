@@ -6,7 +6,6 @@ Show case app for Exchange Rates Converter.
 <p align="center">
   <a href="https://www.gnu.org/licenses/gpl-3.0"><img alt="LICENSE" src="https://img.shields.io/badge/License-GPLv3-blue.svg"/></a>
   <a href="https://android-arsenal.com/api?level=16"><img alt="API" src="https://img.shields.io/badge/API-16%2B-brightgreen"/></a>
-  <a href="https://github.com/arduia/ExchangeRates/releases"><img alt="Status" src="https://img.shields.io/github/v/release/arduia/ExchangeRates"/></a>
 </p> <br>
 
 <table align="center">
