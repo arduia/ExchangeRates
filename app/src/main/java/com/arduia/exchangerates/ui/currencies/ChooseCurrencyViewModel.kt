@@ -1,5 +1,6 @@
 package com.arduia.exchangerates.ui.currencies
 
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
@@ -12,6 +13,7 @@ import com.arduia.exchangerates.ui.common.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
  * Cerated by Aung Ye Htet 16/01/2021 6:53 PM.
@@ -28,7 +30,7 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
     private val _onCurrencySelectError = EventLiveData<Unit>()
     val onCurrencySelectError get() = _onCurrencySelectError.asLiveData()
 
-    val currencyTypeList get() = createLivePagedList()
+    val currencyTypeList = createLivePagedList()
 
     private val queryText = BaseLiveData("")
 
@@ -56,7 +58,7 @@ class ChooseCurrencyViewModel @ViewModelInject constructor(
     }
 
     fun onQuery(query: String) {
-        queryText set query
+        queryText post query
         updateDataSource(query)
     }
 
