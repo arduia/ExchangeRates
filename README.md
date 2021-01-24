@@ -1,6 +1,6 @@
 <h1 align="center">Exchange Rates</h1>
 <p align="center">
-Show case app for Exchange Rates Converter.
+Simple Currency Conversion app.
 </p>
 
 <p align="center">
