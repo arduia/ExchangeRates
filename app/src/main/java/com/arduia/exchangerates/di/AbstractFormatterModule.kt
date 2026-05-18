@@ -7,13 +7,13 @@ import com.arduia.exchangerates.ui.home.format.SyncDateFormatter
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 
 /**
  * Created by Aung Ye Htet on 18/01/2021
  */
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 abstract class AbstractFormatterModule {
 
     @Binds
