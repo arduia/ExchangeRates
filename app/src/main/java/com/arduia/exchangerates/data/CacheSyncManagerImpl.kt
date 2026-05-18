@@ -6,9 +6,9 @@ import com.arduia.exchangerates.domain.Result
 import com.arduia.exchangerates.domain.SuccessResult
 import com.arduia.exchangerates.domain.getDataOrThrow
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
 import java.lang.Exception
 import java.util.*
@@ -24,41 +24,41 @@ class CacheSyncManagerImpl @Inject constructor(
         private val currencyLayerRepository: CurrencyLayerRepository
 ) : CacheSyncManager {
 
-    private val progressChannel = ConflatedBroadcastChannel<SyncState>()
+    private val progressChannel = MutableStateFlow<SyncState>(SyncState.Finished)
 
-    override val progress: Flow<SyncState> = progressChannel.asFlow()
+    override val progress: Flow<SyncState> = progressChannel.asStateFlow()
 
     private var currentJob: Job? = null
     private var currentTimer: Timer? = null
     private var autoSyncCoroutineScope: CoroutineScope? = null
 
     init {
-        progressChannel.offer(SyncState.Finished)
+        progressChannel.value = SyncState.Finished
     }
 
     override suspend fun syncNow(force: Boolean): Result<SyncState.Finished> {
         try {
-            progressChannel.offer(SyncState.Initial)
+            progressChannel.value = SyncState.Initial
             if (isOverMinimumRefreshInterval() || force) {
                 return startSyncProgress()
             }
-            progressChannel.offer(SyncState.Finished)
+            progressChannel.value = SyncState.Finished
             return SuccessResult(SyncState.Finished)
 
         } catch (e: Exception) {
-            progressChannel.offer(SyncState.Finished)
+            progressChannel.value = SyncState.Finished
             return ErrorResult(e)
         }
     }
 
     private suspend fun startSyncProgress(): Result<SyncState.Finished> {
 
-        progressChannel.offer(SyncState.CurrenciesDownloading)
+        progressChannel.value = SyncState.CurrenciesDownloading
         val nameResponse = currencyLayerRepository.getDownloadCurrencyNames().getDataOrThrow()
 
         if (nameResponse.success.not()) throw ServerErrorException(nameResponse.errorInfo!!.code, nameResponse.errorInfo.info)
 
-        progressChannel.offer(SyncState.ExchangeRateDownloading)
+        progressChannel.value = SyncState.ExchangeRateDownloading
         val rateResponse = currencyLayerRepository.getDownloadedUSDCurrencyRates().getDataOrThrow()
 
         if (rateResponse.success.not()) throw ServerErrorException(rateResponse.error!!.code, rateResponse.error.info)
@@ -86,7 +86,7 @@ class CacheSyncManagerImpl @Inject constructor(
 
         updateAutoRefreshTimer(currentDate)
 
-        progressChannel.offer(SyncState.Finished)
+        progressChannel.value = SyncState.Finished
         return SuccessResult(SyncState.Finished)
     }
 

@@ -1,7 +1,6 @@
 package com.arduia.exchangerates.ui.currencies
 
 import android.util.Log
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -10,7 +9,7 @@ import com.arduia.exchangerates.data.PreferencesRepository
 import com.arduia.exchangerates.domain.Mapper
 import com.arduia.exchangerates.domain.SuccessResult
 import com.arduia.exchangerates.ui.common.*
-import dagger.hilt.lifecycle.HiltViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch

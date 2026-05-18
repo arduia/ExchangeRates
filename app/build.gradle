@@ -55,8 +55,14 @@ android {
         jvmTarget = '1.8'
     }
 
+    kapt {
+        correctErrorTypes = true
+        useBuildCache = true
+    }
+
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
 }
@@ -70,7 +76,7 @@ dependencies {
     def androidx_appcompat_version = "1.7.0"
     def junit_version = "4.13.2"
     def androidx_test_ext_version = "1.1.5"
-    def androidx_test_core_version = "1.5.0"
+    def androidx_test_core_version = "1.3.0"
     def kotlin_coroutines_version = "1.8.0"
     def androidx_navigation_version = "2.7.7"
     def androidx_room_version = "2.6.1"
@@ -83,13 +89,13 @@ dependencies {
     def timber_version = "4.7.1"
     def leak_canary_version = "2.14"
     def androidx_recycler_version = "1.3.2"
-    def androidx_hilt_version = "1.2.0"
+    def androidx_hilt_version = "1.1.0"
     def androidx_core_test_version = "2.2.0"
     def mockito_test_version = "5.7.0"
     def chucker_version = "4.0.0"
 
     //Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.0.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.23"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
 
     //AndroidX Core
@@ -135,15 +141,13 @@ dependencies {
     //Dependency Injection
     implementation "com.google.dagger:hilt-android:2.51.1"
     kapt "com.google.dagger:hilt-android-compiler:2.51.1"
-    kapt "androidx.hilt:hilt-compiler:$androidx_hilt_version"
-    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$androidx_hilt_version"
 
     //Testing
     testImplementation "junit:junit:$junit_version"
     testImplementation "androidx.arch.core:core-testing:$androidx_core_test_version"
     testImplementation "org.mockito:mockito-core:$mockito_test_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_test_ext_version"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_test_core_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.3.0"
 
     //Timber
     implementation "com.jakewharton.timber:timber:$timber_version"

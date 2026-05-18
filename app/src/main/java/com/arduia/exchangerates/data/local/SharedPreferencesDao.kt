@@ -2,9 +2,9 @@ package com.arduia.exchangerates.data.local
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -17,8 +17,8 @@ class SharedPreferencesDao @Inject constructor(
 
     private val preference = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
 
-    private val selectedCurrencyTypeChannel = ConflatedBroadcastChannel<String>()
-    private val lastSyncDateChannel = ConflatedBroadcastChannel<Long>()
+    private val selectedCurrencyTypeChannel = MutableStateFlow<String>("")
+    private val lastSyncDateChannel = MutableStateFlow<Long>(0L)
 
     override suspend fun setSelectedCurrencyType(value: String): Boolean {
         preference.edit()
@@ -27,7 +27,7 @@ class SharedPreferencesDao @Inject constructor(
         //Fetch Current Value.
         val currentValue = getSelectedCurrencyTypeSync()
         //Update Listeners
-        selectedCurrencyTypeChannel.offer(currentValue)
+        selectedCurrencyTypeChannel.value = currentValue
         //Check it successfully inserted or not.
         return currentValue == value
     }
@@ -40,9 +40,9 @@ class SharedPreferencesDao @Inject constructor(
     override fun getSelectedCurrencyTypeFlow(): Flow<String> {
         runBlocking {
             val currentValue = getSelectedCurrencyTypeSync()
-            selectedCurrencyTypeChannel.offer(currentValue)
+            selectedCurrencyTypeChannel.value = currentValue
         }
-        return selectedCurrencyTypeChannel.asFlow()
+        return selectedCurrencyTypeChannel.asStateFlow()
     }
 
     override suspend fun setLastSyncDate(value: Long): Boolean {
@@ -50,7 +50,7 @@ class SharedPreferencesDao @Inject constructor(
             .putLong(KEY_LAST_SYNC_DATE, value)
             .apply()
         val currentValue = getLastSyncDateSync()
-        lastSyncDateChannel.offer(currentValue)
+        lastSyncDateChannel.value = currentValue
         return currentValue == value
     }
 
@@ -61,9 +61,9 @@ class SharedPreferencesDao @Inject constructor(
     override fun getLastSyncDateFlow(): Flow<Long> {
         runBlocking {
             val currentValue = getLastSyncDateSync()
-            lastSyncDateChannel.offer(currentValue)
+            lastSyncDateChannel.value = currentValue
         }
-        return lastSyncDateChannel.asFlow()
+        return lastSyncDateChannel.asStateFlow()
     }
 
     companion object {
