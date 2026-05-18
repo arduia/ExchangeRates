@@ -5,14 +5,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arduia.exchangerates.data.*
 import com.arduia.exchangerates.ui.common.*
+import dagger.hilt.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Cerated by Aung Ye Htet 16/01/2021 6:51 PM.
  */
-class SplashViewModel @ViewModelInject constructor(
+@HiltViewModel
+class SplashViewModel @Inject constructor(
         private val cacheSyncManager: CacheSyncManager
 ) : ViewModel() {
 

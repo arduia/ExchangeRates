@@ -10,15 +10,18 @@ import com.arduia.exchangerates.data.PreferencesRepository
 import com.arduia.exchangerates.domain.Mapper
 import com.arduia.exchangerates.domain.SuccessResult
 import com.arduia.exchangerates.ui.common.*
+import dagger.hilt.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 /**
  * Cerated by Aung Ye Htet 16/01/2021 6:53 PM.
  */
-class ChooseCurrencyViewModel @ViewModelInject constructor(
+@HiltViewModel
+class ChooseCurrencyViewModel @Inject constructor(
         private val currencyMapper: Mapper<CurrencyTypeDto, CurrencyTypeItemUiModel>,
         private val currencyDataSourceFactory: CurrencyDataSourceFactory,
         private val preferencesRepository: PreferencesRepository

@@ -11,15 +11,18 @@ import com.arduia.exchangerates.data.exception.ServerErrorException
 import com.arduia.exchangerates.domain.*
 import com.arduia.exchangerates.ui.common.*
 import com.arduia.exchangerates.ui.home.format.DateFormatter
+import dagger.hilt.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import java.util.*
+import javax.inject.Inject
 
 
 /**
  * Cerated by Aung Ye Htet 16/01/2021 6:52 PM.
  */
-class HomeViewModel @ViewModelInject constructor(
+@HiltViewModel
+class HomeViewModel @Inject constructor(
         exchangeRateMapperFactory: ExchangeRateMapperFactory,
         private val exchangeRatesRepository: ExchangeRatesRepository,
         private val currencyLayerRepository: CurrencyLayerRepository,
